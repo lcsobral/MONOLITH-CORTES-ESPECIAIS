@@ -32,20 +32,17 @@ juntos, nos mesmos caminhos relativos.
 
 | Quero ajustar... | Arquivo | Onde dentro do arquivo |
 |---|---|---|
-| Uma pergunta do formulário (texto, tipo de campo, sugestão de preenchimento) | `schemas.js` | objeto `SCHEMAS`, dentro do tipo de bancada (`ilha`, `reta`, `l`, `u`, `especial`, `wc`) |
+| Uma medida do formulário (nome, tipo, valor padrão) de um tipo de bancada | `schemas.js` | objeto `SCHEMAS`, dentro do tipo de bancada (`ilha`, `reta`, `l`, `u`, `especial`, `wc`) — hoje só existe a seção "Dimensões" |
 | Adicionar/remover um tipo de bancada | `schemas.js` | `SCHEMAS` (adicionar bloco) + `TYPE_ORDER` (adicionar chave) + `ICONS` (ícone planta/iso do cartão) |
 | Ícone (planta+isométrica) do cartão de seleção de tipo | `schemas.js` | objeto `ICONS`, chave `plan` e `iso` de cada tipo |
 | Cores, fontes, tamanho das vistas, espaçamento dos cartões | `styles.css` | procure pela classe (ex.: `.type-card`, `.dim-editor`, `.td-panel`) |
 | Fundo da página, tons de cinza, azul de destaque | `styles.css` | seletor `:root` no topo (variáveis `--paper`, `--stone`, `--blue` etc.) |
-| Como a planta baixa é desenhada (cotas, hachura, paredes) | `drawing-engine.js` | função `buildPlanSVG` |
-| Como a isométrica é desenhada (extrusão 3D, hachura, paredes) | `drawing-engine.js` | função `buildIsoSVG` |
-| Como a elevação é desenhada (altura, frontão, saia, parede) | `drawing-engine.js` | função `buildElevationSVG` |
+| Como a planta baixa é desenhada (cotas, hachura) | `drawing-engine.js` | função `buildPlanSVG` |
+| Como a isométrica é desenhada (extrusão 3D, espessura, hachura) | `drawing-engine.js` | função `buildIsoSVG` |
+| Como a elevação é desenhada (altura, frontão, saia) | `drawing-engine.js` | função `buildElevationSVG` |
 | A forma/geometria de cada tipo de bancada (largura x profundidade, formato do L/U/Especial/WC) | `drawing-engine.js` | função `buildFootprint` |
-| Como o sistema lê a posição da cuba/cooktop a partir do texto digitado | `drawing-engine.js` | funções `parseSize` e `parsePosition` |
-| Limites mínimo/máximo de cada cota (ex.: largura 10–500cm) | `app.js` | função `getLimits` |
-| Textos de sugestão dos campos de texto livre (área molhada, recorte de cuba etc.) | `app.js` | `FIELD_PLACEHOLDERS` |
+| Limites mínimo/máximo de cada cota (ex.: largura 10–500cm, espessura 1–25cm) | `app.js` | função `getLimits` |
 | O comportamento das cotas editáveis (aparecer antes, sumir se vazia, botão Atualizar) | `app.js` | função `renderDimEditor` |
-| A lista de perguntas que aparecem normalmente no formulário (fechamentos, áreas, recortes, torneiras, paredes) | `app.js` | função `renderField` |
 | O resumo final (Etapa 3) — o que aparece na "ficha técnica" | `app.js` | função `buildSummary` |
 | O desenho técnico dentro do resumo final | `app.js` | função `renderTechDrawing` |
 | O conteúdo do PDF gerado | `app.js` | função `buildPDFDoc` |
@@ -53,6 +50,10 @@ juntos, nos mesmos caminhos relativos.
 | Validação dos campos Nome/Telefone/E-mail | `app.js` | função `validateContact` |
 | Navegação entre as 3 etapas (Tipo → Detalhes → Resumo) | `app.js` | função `goTo` |
 | Texto/estrutura fixa da página (títulos, botões, layout das etapas) | `index.html` | procure pelo texto ou `id` do elemento |
+
+**Nota:** o questionário com perguntas de texto (material, fechamentos,
+áreas, recortes, torneiras, paredes) foi removido. Hoje o app só coleta as
+medidas (cotas), direto no desenho, mais os dados de contato.
 
 ---
 
@@ -67,8 +68,7 @@ arquivos.
 
 1. `selectType(key)` — usuário escolhe o tipo → zera respostas → `renderForm`
 2. `renderForm(key)` — monta o formulário da Etapa 2 a partir do `SCHEMAS`;
-   a seção "Dimensões" vira o desenho editável (`renderDimEditor`) em vez de
-   campos de texto comuns
+   a seção "Dimensões" vira o desenho editável (`renderDimEditor`)
 3. `renderDimEditor()` — desenha planta/iso/elevação com as cotas tocáveis
 4. Botão "Gerar resumo" → `buildSummary()` → monta a ficha técnica e chama
    `renderTechDrawing()` para o desenho final

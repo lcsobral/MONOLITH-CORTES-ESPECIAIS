@@ -51,8 +51,8 @@ function buildFootprint(type, answers){
     };
   }
   if (type === 'reta'){
-    const w = num(answers.largura, 250);
-    const d = num(answers.profundidade, 60);
+    const w = num(answers.largura, 150);
+    const d = num(answers.profundidade, 55);
     return {
       pts: [[0,0],[w,0],[w,d],[0,d]],
       dims: [ {id:'largura', value:w, edge:[[0,0],[w,0]]}, {id:'profundidade', value:d, edge:[[0,0],[0,d]]} ],
@@ -91,9 +91,7 @@ function buildFootprint(type, answers){
     const Pd = num(answers.profundidade_direita, 60);
     const Gf = num(answers.largura_fundo, 120);
     const Pf = num(answers.profundidade_fundo, 60);
-    const Le = num(answers.largura_esquerda, 200);
-    const Ld = num(answers.largura_direita, 200);
-    const Dtot = Math.max(Le, Ld, Pf+10);
+    const Dtot = Math.max(num(answers.largura_esquerda, 200), Pf+10);
     const notchFront = Math.max(0, Dtot - Pf);
     const W = Pe + Gf + Pd;
     const pts = [[0,0],[Pe,0],[Pe,notchFront],[Pe+Gf,notchFront],[Pe+Gf,0],[W,0],[W,Dtot],[0,Dtot]];
@@ -351,7 +349,10 @@ function buildPlanSVG(pts, dims, sinkRect, cooktopRect, faucetPt, activeWalls, o
 }
 
 /* ---------------- ISOMETRIC VIEW (with walls + frontao/saia) ---------------- */
-function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTopH, activeWalls, frontaoVal, saiaVal, isoOverride){
+function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTopH, activeWalls, frontaoVal, saiaVal, isoOverride, opts){
+  opts = opts || {};
+  const editable = !!opts.editable;
+  const espessuraKnown = editable ? !!(opts.hasValues && opts.hasValues.espessura) : true;
   H = H || 8;
   const xsRaw = pts.map(([x,y]) => (x-y)*Math.cos(Math.PI/6));
   const ysRaw = pts.map(([x,y]) => -(x+y)*0.5);
@@ -363,6 +364,7 @@ function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTop
 
   const top = pts.map(([x,y]) => isoProject(x,y,H,ox,oy,s));
   const plain = [], hatch = [];
+  const visEdges = [];
 
   if (isoOverride){
     const hatchKeys = new Set(isoOverride.hatch.map(([a,b]) => a[0]+','+a[1]+'|'+b[0]+','+b[1]));
@@ -371,7 +373,9 @@ function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTop
       const base1 = isoProject(p1[0],p1[1],0,ox,oy,s), base2 = isoProject(p2[0],p2[1],0,ox,oy,s);
       const quad = [top1, top2, base2, base1];
       const key = p1[0]+','+p1[1]+'|'+p2[0]+','+p2[1];
+      const isEndE = Math.abs(p2[1]-p1[1]) > Math.abs(p2[0]-p1[0]);
       (hatchKeys.has(key) ? hatch : plain).push(quad);
+      visEdges.push({p1,p2,isEnd:isEndE});
     });
   } else {
     const { edges } = classifyEdges(pts, ox, oy, s, H);
@@ -381,6 +385,7 @@ function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTop
       const base1 = isoProject(x1,y1,0,ox,oy,s), base2 = isoProject(x2,y2,0,ox,oy,s);
       const quad = [e.top1, e.top2, base2, base1];
       (e.isEnd ? hatch : plain).push(quad);
+      visEdges.push({p1:e.p1,p2:e.p2,isEnd:e.isEnd});
     });
   }
 
@@ -393,7 +398,7 @@ function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTop
   if (fVal>0 || sVal>0) frontExtraH = (fVal+sVal)*s;
 
   const totalH = h*s + H*s + 12 + 10 + wallExtraH + frontExtraH;
-  const totalW = w*s + 14 + 12;
+  const totalW = w*s + 14 + 12 + (editable ? 24 : 0);
 
   let svg = `<svg viewBox="0 0 ${totalW.toFixed(0)} ${totalH.toFixed(0)}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">`;
 
@@ -425,6 +430,32 @@ function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTop
   if (faucetPt){
     const [fx,fy] = isoProject(faucetPt[0], faucetPt[1], H, ox, oy, s);
     svg += `<ellipse cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" rx="3" ry="1.5" transform="rotate(-20 ${fx.toFixed(1)} ${fy.toFixed(1)})" stroke-width="1.1"/>`;
+  }
+
+  // ESPESSURA — thickness cota shown on the rightmost end face, like the reference
+  const espessuraLabels = [];
+  const endEdges = visEdges.filter(e => e.isEnd);
+  if (endEdges.length){
+    endEdges.sort((a,b) => Math.max(b.p1[0],b.p2[0]) - Math.max(a.p1[0],a.p2[0]));
+    const e = endEdges[0];
+    const midx = (e.p1[0]+e.p2[0])/2, midy = (e.p1[1]+e.p2[1])/2;
+    const topPt = isoProject(midx, midy, H, ox, oy, s);
+    const basePt = isoProject(midx, midy, 0, ox, oy, s);
+    const tickDx = 10;
+    if (!editable || espessuraKnown){
+      svg += `<g stroke="#2451D6" stroke-width="1">`;
+      svg += `<line x1="${(topPt[0]+tickDx).toFixed(1)}" y1="${topPt[1].toFixed(1)}" x2="${(basePt[0]+tickDx).toFixed(1)}" y2="${basePt[1].toFixed(1)}"/>`;
+      svg += `<line x1="${(topPt[0]+tickDx-3).toFixed(1)}" y1="${topPt[1].toFixed(1)}" x2="${(topPt[0]+tickDx+3).toFixed(1)}" y2="${topPt[1].toFixed(1)}"/>`;
+      svg += `<line x1="${(basePt[0]+tickDx-3).toFixed(1)}" y1="${basePt[1].toFixed(1)}" x2="${(basePt[0]+tickDx+3).toFixed(1)}" y2="${basePt[1].toFixed(1)}"/>`;
+      svg += `</g>`;
+    }
+    const labelX = (topPt[0]+basePt[0])/2 + tickDx + 9;
+    const labelY = (topPt[1]+basePt[1])/2;
+    if (!editable){
+      svg += `<text x="${labelX.toFixed(1)}" y="${labelY.toFixed(1)}" font-size="6.5" font-family="monospace" fill="#2451D6" stroke="none" text-anchor="middle">${fmtN(H)}cm</text>`;
+    } else {
+      espessuraLabels.push({ id:'espessura', x:labelX, y:labelY, rot:0, value:H, known:espessuraKnown, prefix:'' });
+    }
   }
 
   // FRONTAO / SAIA hanging panels on all front (y=0) edges
@@ -469,7 +500,7 @@ function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTop
   }
 
   svg += '</svg>';
-  return { svg, vbW: totalW, vbH: totalH };
+  return { svg, vbW: totalW, vbH: totalH, labels: espessuraLabels };
 }
 
 /* ---------------- ELEVATION VIEW (front: width x height-from-floor) ---------------- */
