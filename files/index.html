@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#BEBCB5">
+<title>Monolith Arquitetura — Questionário de Bancadas</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="hatchPlan" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#3D3B34" stroke-width="1"/>
+    </pattern>
+    <pattern id="hatchIso" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="5" stroke="#3D3B34" stroke-width="1"/>
+    </pattern>
+  </defs>
+</svg>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand"><img src="assets/logo.png" alt="Monolith Arquitetura"></div>
+    <div class="progress" id="progress">
+      <span class="step active" data-step="1"><span class="dot"></span>Tipo</span>
+      <span class="rule"></span>
+      <span class="step" data-step="2"><span class="dot"></span>Detalhes</span>
+      <span class="rule"></span>
+      <span class="step" data-step="3"><span class="dot"></span>Resumo</span>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <section class="step-panel fade-in" id="panel-1">
+    <p class="eyebrow">Questionário técnico — 01</p>
+    <h1 class="title">Qual é o formato<br>da sua bancada?</h1>
+    <p class="lede">Selecione o tipo de bancada para abrir o questionário correspondente. Cada formato tem suas próprias medidas e acabamentos.</p>
+    <div class="type-grid" id="typeGrid"></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step-panel" id="panel-2" hidden>
+    <p class="eyebrow">Questionário técnico — 02</p>
+    <h1 class="title" id="formTitle">Detalhes da bancada</h1>
+    <p class="lede">Preencha o que puder. Os campos em branco aparecerão como "não informado" no resumo final — você pode voltar e completar depois.</p>
+
+    <div class="project-name">
+      <label for="projectName">Nome do cliente / projeto (opcional)</label>
+      <input type="text" id="projectName" maxlength="150" placeholder="Ex.: Residência Almeida — Cozinha">
+    </div>
+
+    <form id="formSections"></form>
+
+    <div class="contact-block">
+      <p class="eyebrow">Seus dados de contato</p>
+      <div class="contact-grid">
+        <div class="cfield">
+          <label for="clientName">Nome</label>
+          <input type="text" id="clientName" autocomplete="name">
+          <span class="ferror" id="err-clientName"></span>
+        </div>
+        <div class="cfield">
+          <label for="clientPhone">Telefone</label>
+          <input type="tel" id="clientPhone" autocomplete="tel" placeholder="(00) 00000-0000">
+          <span class="ferror" id="err-clientPhone"></span>
+        </div>
+        <div class="cfield">
+          <label for="clientEmail">E-mail</label>
+          <input type="email" id="clientEmail" autocomplete="email" placeholder="voce@exemplo.com">
+          <span class="ferror" id="err-clientEmail"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn ghost" id="backTo1" type="button">← Trocar tipo</button>
+      <button class="btn accent" id="sendResumoBtn" type="button">Gerar resumo →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step-panel" id="panel-3" hidden>
+    <p class="eyebrow">Questionário técnico — 03</p>
+    <h1 class="title">Resumo do pedido</h1>
+    <p class="lede">Confira as informações abaixo. Copie ou baixe o resumo para enviar ao seu contato Monolith.</p>
+
+    <div class="tech-drawing" id="techDrawing"></div>
+
+    <div class="spec-sheet" id="specSheet"></div>
+
+    <div class="summary-actions">
+      <button class="btn accent" id="downloadBtn" type="button">Salvar PDF</button>
+      <button class="btn ghost" id="copyBtn" type="button">Copiar resumo</button>
+      <button class="btn ghost" id="backTo2" type="button">← Editar respostas</button>
+      <button class="btn ghost" id="restartBtn" type="button">Novo questionário</button>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Monolith Arquitetura</span>
+    <span>Formulário técnico de bancadas</span>
+  </footer>
+</div>
+
+<script src="schemas.js"></script>
+<script src="drawing-engine.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
