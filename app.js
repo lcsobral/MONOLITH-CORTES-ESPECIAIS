@@ -1,707 +1,88 @@
-/* ---------------------------------------------------------
-   STATE
---------------------------------------------------------- */
-let currentType = null;
-let answers = {};
-let dimEditorTouched = false;
-
-/* ---------------------------------------------------------
-   STEP 1 — build type cards
---------------------------------------------------------- */
-const typeGrid = document.getElementById('typeGrid');
-TYPE_ORDER.forEach((key, i) => {
-  const s = SCHEMAS[key];
-  const card = document.createElement('button');
-  card.type = 'button';
-  card.className = 'type-card';
-  card.innerHTML = `
-    <span class="idx">0${i+1}</span>
-    <span class="drawing-pair">
-      <span class="drawing drawing-plan">${ICONS[key].plan}</span>
-      <span class="drawing drawing-iso">${ICONS[key].iso}</span>
-    </span>
-    <span class="name">${s.name}</span>
-    <span class="desc">${s.desc}</span>
-  `;
-  card.addEventListener('click', () => selectType(key));
-  typeGrid.appendChild(card);
-});
-
-function selectType(key){
-  currentType = key;
-  answers = {};
-  dimEditorTouched = false;
-  document.getElementById('projectName').value = '';
-  renderForm(key);
-  goTo(2);
-}
-
-/* ---------------------------------------------------------
-   STEP 2 — render form
---------------------------------------------------------- */
-const formSections = document.getElementById('formSections');
-
-function renderForm(key){
-  const schema = SCHEMAS[key];
-  document.getElementById('formTitle').textContent = schema.name;
-  formSections.innerHTML = '';
-
-  if (schema.note){
-    const note = document.createElement('p');
-    note.className = 'hint';
-    note.style.marginBottom = '2rem';
-    note.style.color = 'var(--grey-2)';
-    note.textContent = schema.note;
-    formSections.appendChild(note);
-  }
-
-  schema.sections.forEach((section, si) => {
-    const fs = document.createElement('fieldset');
-    fs.className = 'section';
-    const head = document.createElement('div');
-    head.className = 'section-head';
-    head.innerHTML = `<span class="num">0${si+1}</span><h2>${section.title}</h2>`;
-    fs.appendChild(head);
-
-    if (section.title === 'Dimensões'){
-      const hint = document.createElement('p');
-      hint.className = 'hint';
-      hint.style.marginBottom = '1rem';
-      hint.textContent = 'Toque em uma cota no desenho para preencher o valor, depois clique em "Atualizar desenho".';
-      fs.appendChild(hint);
-      const editorDiv = document.createElement('div');
-      editorDiv.id = 'dimEditor';
-      editorDiv.className = 'dim-editor';
-      fs.appendChild(editorDiv);
-    } else {
-      section.fields.forEach(f => fs.appendChild(renderField(f)));
-    }
-    formSections.appendChild(fs);
-  });
-
-  renderDimEditor();
-}
-
-const FIELD_PLACEHOLDERS = {
-  area_molhada: 'A área molhada está posicionada:\n30 cm da lateral esquerda\n5 cm da parte inferior\n110 cm da lateral esquerda\n30 cm da parte posterior',
-  area_seca: 'Todo o restante',
-  recorte_cuba: '70 cm da lateral esquerda\n10 cm da parte inferior\nCuba de inox 50x30x22 (LxAxP)',
-  recorte_cooktop: '25 cm lateral direita\n10 cm parte inferior\nRecorte 75x60 (LxP)',
-  torneira_bancada: 'Eixo da cuba\nFuro 5 cm',
-  torneira_pe: 'Eixo da cuba\nFuro 5 cm',
-  recorte_parede: 'Recorte parte posterior direita\n120x20 (distância da parede direita x recuo da parte posterior)',
-};
-
-function renderField(f){
-  const wrap = document.createElement('div');
-  wrap.className = 'field';
-
-  const label = document.createElement('label');
-  label.className = 'flabel';
-  label.textContent = f.label;
-  label.setAttribute('for', f.id);
-  wrap.appendChild(label);
-
-  if (f.type === 'cm'){
-    const dw = document.createElement('div');
-    dw.className = 'dim-wrap';
-    dw.innerHTML = `
-      <span class="dim-tick"></span>
-      <span class="dim-input">
-        <input type="number" min="0" step="0.5" inputmode="decimal" id="${f.id}" placeholder="0">
-      </span>
-      <span class="dim-unit">CM</span>
-    `;
-    wrap.appendChild(dw);
-    const input = dw.querySelector('input');
-    input.value = answers[f.id] || '';
-    input.addEventListener('input', e => answers[f.id] = e.target.value);
-  }
-
-  if (f.type === 'text'){
-    const ta = document.createElement('textarea');
-    ta.id = f.id;
-    ta.maxLength = 3000;
-    ta.placeholder = FIELD_PLACEHOLDERS[f.id] || 'Descreva aqui…';
-    ta.value = answers[f.id] || '';
-    wrap.appendChild(ta);
-    const cc = document.createElement('span');
-    cc.className = 'charcount';
-    const updateCC = () => cc.textContent = `${ta.value.length} / 3000`;
-    updateCC();
-    ta.addEventListener('input', () => { answers[f.id] = ta.value; updateCC(); });
-    wrap.appendChild(cc);
-  }
-
-  if (f.type === 'bool'){
-    wrap.appendChild(renderToggle(f.id));
-  }
-
-  if (f.type === 'boolText'){
-    const tg = renderToggle(f.id);
-    wrap.appendChild(tg);
-
-    const cond = document.createElement('div');
-    cond.className = 'conditional';
-    const hint = document.createElement('span');
-    hint.className = 'hint';
-    hint.textContent = f.textLabel;
-    const ta = document.createElement('textarea');
-    ta.id = f.id + '_texto';
-    ta.maxLength = 3000;
-    ta.placeholder = FIELD_PLACEHOLDERS[f.id] || 'Descreva aqui…';
-    ta.value = answers[f.id + '_texto'] || '';
-    const cc = document.createElement('span');
-    cc.className = 'charcount';
-    const updateCC = () => cc.textContent = `${ta.value.length} / 3000`;
-    updateCC();
-    ta.addEventListener('input', () => { answers[f.id + '_texto'] = ta.value; updateCC(); });
-    cond.appendChild(hint);
-    cond.appendChild(ta);
-    cond.appendChild(cc);
-    if (answers[f.id] === 'sim') cond.classList.add('show');
-    wrap.appendChild(cond);
-
-    tg.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        cond.classList.toggle('show', btn.dataset.val === 'sim');
-      });
-    });
-  }
-
-  return wrap;
-}
-
-function renderToggle(id){
-  const tg = document.createElement('div');
-  tg.className = 'toggle';
-  tg.innerHTML = `
-    <button type="button" class="yes" data-val="sim" aria-pressed="${answers[id]==='sim'}">Sim</button>
-    <button type="button" data-val="nao" aria-pressed="${answers[id]==='nao'}">Não</button>
-  `;
-  tg.querySelectorAll('button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      answers[id] = btn.dataset.val;
-      tg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === btn));
-    });
-  });
-  return tg;
-}
-
-/* ---------------------------------------------------------
-   NAV
---------------------------------------------------------- */
-function goTo(step){
-  [1,2,3].forEach(n => {
-    const panel = document.getElementById('panel-'+n);
-    if (n === step){ panel.hidden = false; panel.classList.add('fade-in'); }
-    else { panel.hidden = true; panel.classList.remove('fade-in'); }
-  });
-  document.querySelectorAll('.progress .step').forEach(el => {
-    const n = Number(el.dataset.step);
-    el.classList.toggle('active', n === step);
-    el.classList.toggle('done', n < step);
-  });
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-document.getElementById('backTo1').addEventListener('click', () => goTo(1));
-document.getElementById('backTo2').addEventListener('click', () => goTo(2));
-document.getElementById('restartBtn').addEventListener('click', () => {
-  currentType = null; answers = {};
-  document.getElementById('projectName').value = '';
-  ['clientName','clientPhone','clientEmail'].forEach(id => {
-    document.getElementById(id).value = '';
-    document.getElementById(id).classList.remove('invalid');
-    document.getElementById('err-'+id).textContent = '';
-  });
-  goTo(1);
-});
-
-/* ---------------------------------------------------------
-   STEP 3 — summary
---------------------------------------------------------- */
-let summaryText = '';
-
-function fmtVal(f){
-  if (f.type === 'cm'){
-    const v = answers[f.id];
-    return v ? { text: `${v} cm`, empty:false } : { text:'Não informado', empty:true };
-  }
-  if (f.type === 'text'){
-    const v = (answers[f.id] || '').trim();
-    return v ? { text:v, empty:false } : { text:'Não informado', empty:true };
-  }
-  if (f.type === 'bool'){
-    const v = answers[f.id];
-    if (!v) return { text:'Não informado', empty:true };
-    return { text: v === 'sim' ? 'Sim' : 'Não', empty:false };
-  }
-  if (f.type === 'boolText'){
-    const v = answers[f.id];
-    if (!v) return { text:'Não informado', empty:true, extra:null };
-    const base = v === 'sim' ? 'Sim' : 'Não';
-    const extra = v === 'sim' ? (answers[f.id+'_texto']||'').trim() : null;
-    return { text: base, empty:false, extra: extra || null };
-  }
-}
-
-/* ---------------------------------------------------------
-   LIVE TECHNICAL DRAWING — plan + isometric views built from
-   the REAL values the person entered (not a generic icon).
-   Keeps true proportions between width/depth; sink/cooktop
-   cutouts are estimated from the free-text description when
-   it follows the suggested "NN cm da lateral/parte..." format.
---------------------------------------------------------- */
-// ============ Isometric projection core (JS port) ============
-
-function has(id){
-  const v = answers[id];
-  return v !== undefined && v !== null && String(v).trim() !== '';
-}
-
-function getLimits(id){
-  if (id === 'altura') return [50, 120];
-  if (id === 'saia' || id === 'frontao') return [0, 40];
-  if (id.indexOf('largura') === 0) return [10, 500];
-  if (id.indexOf('profundidade') === 0) return [10, 120];
-  return [0, 2000];
-}
-
-function renderDimEditor(){
-  const container = document.getElementById('dimEditor');
-  if (!container || !currentType) return;
-
-  const fp = buildFootprint(currentType, answers);
-  const hasValuesPlan = {};
-  fp.dims.forEach(d => { hasValuesPlan[d.id] = dimEditorTouched ? has(d.id) : true; });
-
-  const plan = buildPlanSVG(fp.pts, fp.dims, null, null, null, null, {editable:true, hasValues:hasValuesPlan});
-  const iso = buildIsoSVG(fp.pts, null, null, null, 8, 300, 150, null, 0, 0, fp.isoOverride);
-
-  const schema = SCHEMAS[currentType];
-  const dimSection = schema.sections.find(s => s.title === 'Dimensões');
-  const dimFieldIds = dimSection ? dimSection.fields.map(f => f.id) : [];
-  const hasAltura = dimFieldIds.includes('altura');
-  const hasFrontaoField = dimFieldIds.includes('frontao');
-  const hasSaiaField = dimFieldIds.includes('saia');
-
-  let elevation = null;
-  if (hasAltura){
-    const alturaFallback = num(answers.altura, 90);
-    const frontaoFallback = hasFrontaoField ? num(answers.frontao, 8) : 0;
-    const saiaFallback = hasSaiaField ? num(answers.saia, 12) : 0;
-    elevation = buildElevationSVG(fp.W, alturaFallback, {
-      frontaoVal: frontaoFallback,
-      saiaVal: saiaFallback,
-      editable: true,
-      frontaoApplicable: hasFrontaoField,
-      saiaApplicable: hasSaiaField,
-      hasValues: {
-        altura: dimEditorTouched ? has('altura') : true,
-        frontao: dimEditorTouched ? has('frontao') : true,
-        saia: dimEditorTouched ? has('saia') : true
-      }
-    });
-  }
-
-  function overlayInputs(labels, vbW, vbH){
-    return labels.map(l => {
-      const leftPct = (l.x/vbW*100).toFixed(2);
-      const topPct = (l.y/vbH*100).toFixed(2);
-      const val = has(l.id) ? answers[l.id] : '';
-      const prefix = l.prefix ? `<span class="dim-prefix">${l.prefix}</span>` : '';
-      return `<div class="dim-input-overlay" style="left:${leftPct}%; top:${topPct}%;">
-        ${prefix}
-        <input type="text" inputmode="decimal" data-dim-id="${l.id}" value="${val}" placeholder="cm">
-      </div>`;
-    }).join('');
-  }
-
-  container.innerHTML = `
-    <div class="dim-editor-panels">
-      <div class="dim-editor-panel">
-        <span class="td-label">Planta baixa</span>
-        <div class="dim-drawing-wrap">
-          ${plan.svg}
-          ${overlayInputs(plan.labels, plan.vbW, plan.vbH)}
-        </div>
-      </div>
-      <div class="dim-editor-panel">
-        <span class="td-label">Isométrica</span>
-        <div class="dim-drawing-wrap">${iso.svg}</div>
-      </div>
-      ${elevation ? `<div class="dim-editor-panel">
-        <span class="td-label">Elevação</span>
-        <div class="dim-drawing-wrap">
-          ${elevation.svg}
-          ${overlayInputs(elevation.labels, elevation.vbW, elevation.vbH)}
-        </div>
-      </div>` : ''}
-    </div>
-    <div class="dim-editor-actions">
-      <span class="dim-editor-error" id="dimEditorError"></span>
-      <button type="button" class="btn accent" id="refreshDimsBtn">Atualizar desenho</button>
-    </div>
-  `;
-
-  container.querySelector('#refreshDimsBtn').addEventListener('click', () => {
-    const inputs = container.querySelectorAll('[data-dim-id]');
-    const errBox = container.querySelector('#dimEditorError');
-    errBox.textContent = '';
-    let ok = true;
-    const pending = {};
-    inputs.forEach(inp => {
-      const id = inp.dataset.dimId;
-      const raw = inp.value.trim();
-      inp.classList.remove('invalid');
-      if (raw === ''){ pending[id] = null; return; }
-      const n = parseFloat(raw.replace(',', '.'));
-      if (!isFinite(n)){
-        inp.classList.add('invalid'); ok = false;
-        errBox.textContent = 'Use apenas números nas cotas.';
-        return;
-      }
-      const [min, max] = getLimits(id);
-      if (n < min || n > max){
-        inp.classList.add('invalid'); ok = false;
-        errBox.textContent = `Valor fora do intervalo esperado (${min}–${max} cm).`;
-        return;
-      }
-      pending[id] = n;
-    });
-    if (!ok) return;
-    dimEditorTouched = true;
-    Object.keys(pending).forEach(id => {
-      if (pending[id] === null) delete answers[id];
-      else answers[id] = String(pending[id]);
-    });
-    renderDimEditor();
-  });
-}
-
-function renderTechDrawing(containerId){
-  const container = document.getElementById(containerId || 'techDrawing');
-  if (!container) return;
-  if (!currentType){ container.innerHTML = ''; return; }
-
-  const fp = buildFootprint(currentType, answers);
-
-  let sinkRect = null, cooktopRect = null;
-  if (answers.recorte_cuba === 'sim'){
-    const size = parseSize(answers.recorte_cuba_texto, 45, 35);
-    sinkRect = parsePosition(answers.recorte_cuba_texto, fp.W, fp.D, size);
-  }
-  if (answers.recorte_cooktop === 'sim'){
-    const size = parseSize(answers.recorte_cooktop_texto, 70, 50);
-    cooktopRect = parsePosition(answers.recorte_cooktop_texto, fp.W, fp.D, size);
-  }
-
-  let faucetPt = null;
-  const hasFaucet = answers.torneira_bancada === 'sim' || answers.torneira_pe === 'sim';
-  if (hasFaucet){
-    if (sinkRect){
-      faucetPt = [ (sinkRect[0]+sinkRect[2])/2, Math.min(fp.D-3, sinkRect[3]+4) ];
-    } else {
-      faucetPt = [ fp.W/2, fp.D-4 ];
-    }
-  }
-
-  // Walls: only where the summary explicitly says "Sim"
-  let activeWalls = [];
-  if (fp.walls){
-    if (answers.parede_fundo === 'sim' && fp.walls.fundo) activeWalls = activeWalls.concat(fp.walls.fundo);
-    if (answers.parede_lateral_direita === 'sim' && fp.walls.direita) activeWalls = activeWalls.concat(fp.walls.direita);
-    if (answers.parede_lateral_esquerda === 'sim' && fp.walls.esquerda) activeWalls = activeWalls.concat(fp.walls.esquerda);
-  }
-
-  // Frontão / saia: only shown when an actual value was entered (no fabricated defaults)
-  const frontaoVal = (answers.frontao !== undefined && answers.frontao !== '') ? parseFloat(String(answers.frontao).replace(',','.')) || 0 : 0;
-  const saiaVal = (answers.saia !== undefined && answers.saia !== '') ? parseFloat(String(answers.saia).replace(',','.')) || 0 : 0;
-
-  const plan = buildPlanSVG(fp.pts, fp.dims, sinkRect, cooktopRect, faucetPt, activeWalls);
-  const iso = buildIsoSVG(fp.pts, sinkRect, cooktopRect, faucetPt, 8, 340, 170, activeWalls, frontaoVal, saiaVal, fp.isoOverride);
-
-  const alturaVal = (answers.altura !== undefined && answers.altura !== '') ? (parseFloat(String(answers.altura).replace(',','.')) || 0) : 0;
-  let elevation = null;
-  if (alturaVal > 0){
-    elevation = buildElevationSVG(fp.W, alturaVal, {
-      wallLeft: answers.parede_lateral_esquerda === 'sim',
-      wallRight: answers.parede_lateral_direita === 'sim',
-      frontaoVal, saiaVal
-    });
-  }
-
-  const hasEstimate = (answers.recorte_cuba === 'sim') || (answers.recorte_cooktop === 'sim');
-
-  container.innerHTML = `
-    <div class="td-head">
-      <p class="eyebrow">Baseado nas suas respostas</p>
-      <h3>Planta baixa, isométrica${elevation ? ' e elevação' : ''}</h3>
-      ${hasEstimate ? '<p class="td-note">Posição da cuba/cooktop estimada a partir do texto descrito nos campos de recorte. Confira e ajuste com seu contato Monolith se necessário.</p>' : ''}
-      ${!elevation ? '<p class="td-note">Informe a Altura para também ver a vista de elevação.</p>' : ''}
-    </div>
-    <div class="td-panels">
-      <div class="td-panel"><span class="td-label">Planta baixa</span>${plan.svg}</div>
-      <div class="td-panel"><span class="td-label">Isométrica</span>${iso.svg}</div>
-      ${elevation ? `<div class="td-panel"><span class="td-label">Elevação</span>${elevation.svg}</div>` : ''}
-    </div>
-  `;
-}
-
-function buildSummary(){
-  try {
-    renderTechDrawing();
-  } catch (drawErr){
-    const dc = document.getElementById('techDrawing');
-    if (dc) dc.innerHTML = '';
-  }
-
-  const schema = SCHEMAS[currentType];
-  const projectName = document.getElementById('projectName').value.trim();
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-
-  const sheet = document.getElementById('specSheet');
-  sheet.innerHTML = '';
-
-  const head = document.createElement('div');
-  head.className = 'sheet-head';
-  head.innerHTML = `
-    <span class="st">${schema.name}</span>
-    <span class="meta">${projectName ? projectName + '<br>' : ''}${dateStr}</span>
-  `;
-  sheet.appendChild(head);
-
-  const body = document.createElement('div');
-  body.className = 'spec-body';
-
-  let txtLines = [];
-  txtLines.push('MONOLITH ARQUITETURA — RESUMO DE BANCADA');
-  txtLines.push(schema.name.toUpperCase());
-  if (projectName) txtLines.push(`Cliente/projeto: ${projectName}`);
-  txtLines.push(`Gerado em: ${dateStr}`);
-  txtLines.push('');
-
-  schema.sections.forEach(section => {
-    const sec = document.createElement('div');
-    sec.className = 'spec-section';
-    const h3 = document.createElement('h3');
-    h3.textContent = section.title;
-    sec.appendChild(h3);
-
-    txtLines.push(`— ${section.title.toUpperCase()}`);
-
-    section.fields.forEach(f => {
-      const r = fmtVal(f);
-      const row = document.createElement('div');
-      row.className = 'spec-row';
-      row.innerHTML = `<span class="k">${f.label}</span><span class="v ${r.empty?'empty':''}">${escapeHtml(r.text)}</span>`;
-      sec.appendChild(row);
-      txtLines.push(`${f.label}: ${r.text}`);
-
-      if (r.extra){
-        const note = document.createElement('div');
-        note.className = 'spec-note';
-        note.textContent = r.extra;
-        sec.appendChild(note);
-        txtLines.push(`  → ${r.extra}`);
-      }
-    });
-
-    body.appendChild(sec);
-    txtLines.push('');
-  });
-
-  sheet.appendChild(body);
-  summaryText = txtLines.join('\n').trim();
-}
-
-function escapeHtml(s){
-  const d = document.createElement('div');
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-document.getElementById('copyBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('copyBtn');
-  try{
-    await navigator.clipboard.writeText(summaryText);
-    const old = btn.textContent;
-    btn.textContent = 'Copiado ✓';
-    setTimeout(()=> btn.textContent = old, 1600);
-  }catch(e){
-    const ta = document.createElement('textarea');
-    ta.value = summaryText;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  }
-});
-
-function triggerDownload(text, filename){
-  const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
-  triggerDownloadBlob(blob, filename);
-}
-
-function triggerDownloadBlob(blob, filename){
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-/* ---------------------------------------------------------
-   FILENAME — "ML - QUESTIONÁRIO TÉCNICO - <NOME CLIENTE>"
---------------------------------------------------------- */
-function sanitizeForFilename(s){
-  return s.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim();
-}
-function buildFilename(ext){
-  const name = document.getElementById('clientName').value.trim() || 'Cliente';
-  return `ML - QUESTIONÁRIO TÉCNICO - ${sanitizeForFilename(name)}.${ext}`;
-}
-
-/* ---------------------------------------------------------
-   PDF — builds a real, downloadable/shareable PDF so the
-   file itself opens natively on iPhone and Android (and any
-   computer), independent of the WhatsApp/e-mail text preview.
---------------------------------------------------------- */
-function buildPDFDoc(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
-  const marginX = 48;
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const maxWidth = pageW - marginX * 2;
-  let y = 56;
-
-  function ensureSpace(extra){
-    if (y + extra > pageH - 48){ doc.addPage(); y = 56; }
-  }
-  function title(text, size){
-    ensureSpace(size * 1.4);
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(size); doc.setTextColor(15,15,15);
-    doc.text(text, marginX, y);
-    y += size * 1.3;
-  }
-  function subtitle(text){
-    ensureSpace(14);
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(10.5); doc.setTextColor(90,88,80);
-    doc.text(text, marginX, y);
-    doc.setTextColor(15,15,15);
-    y += 16;
-  }
-  function sectionHeader(text){
-    ensureSpace(22);
-    y += 8;
-    doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(36,81,214);
-    doc.text(text.toUpperCase(), marginX, y);
-    doc.setTextColor(15,15,15);
-    y += 5;
-    doc.setDrawColor(215,212,204);
-    doc.line(marginX, y, pageW - marginX, y);
-    y += 12;
-  }
-  function fieldRow(label, value){
-    doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5);
-    const labelLines = doc.splitTextToSize(String(label), maxWidth * 0.42);
-    const valueLines = doc.splitTextToSize(String(value || 'Não informado'), maxWidth * 0.54);
-    const rows = Math.max(labelLines.length, valueLines.length);
-    ensureSpace(rows * 12 + 5);
-    doc.setTextColor(95,92,84);
-    doc.text(labelLines, marginX, y);
-    doc.setTextColor(15,15,15);
-    doc.text(valueLines, marginX + maxWidth * 0.46, y);
-    y += rows * 12 + 5;
-  }
-
-  const schema = SCHEMAS[currentType];
-  const projectName = document.getElementById('projectName').value.trim();
-  const name = document.getElementById('clientName').value.trim();
-  const phone = document.getElementById('clientPhone').value.trim();
-  const email = document.getElementById('clientEmail').value.trim();
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-
-  title('MONOLITH ARQUITETURA', 16);
-  subtitle(`Questionário técnico de bancada — ${schema.name}`);
-  y += 4;
-
-  sectionHeader('Dados do cliente');
-  fieldRow('Nome', name);
-  fieldRow('Telefone', phone);
-  fieldRow('E-mail', email);
-  if (projectName) fieldRow('Cliente / projeto', projectName);
-  fieldRow('Gerado em', dateStr);
-
-  schema.sections.forEach(section => {
-    sectionHeader(section.title);
-    section.fields.forEach(f => {
-      const r = fmtVal(f);
-      fieldRow(f.label, r.text);
-      if (r.extra) fieldRow('   \u2192 detalhe', r.extra);
-    });
-  });
-
-  return doc;
-}
-
-/* ---------------------------------------------------------
-   NAVIGATE TO SUMMARY + SAVE PDF
-   No sending here — just validates contact info, builds the
-   summary/drawing, and lets the person save the PDF.
---------------------------------------------------------- */
-function validateContact(){
-  let ok = true;
-  const fields = [
-    { input:document.getElementById('clientName'), err:document.getElementById('err-clientName'),
-      test: v => v.trim().length > 0, msg:'Informe seu nome.' },
-    { input:document.getElementById('clientPhone'), err:document.getElementById('err-clientPhone'),
-      test: v => v.trim().length >= 8, msg:'Informe um telefone válido.' },
-    { input:document.getElementById('clientEmail'), err:document.getElementById('err-clientEmail'),
-      test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()), msg:'Informe um e-mail válido.' },
-  ];
-  fields.forEach(f => {
-    f.input.classList.remove('invalid');
-    f.err.textContent = '';
-    if (!f.test(f.input.value)){
-      f.input.classList.add('invalid');
-      f.err.textContent = f.msg;
-      ok = false;
-    }
-  });
-  return ok;
-}
-
-function pdfAvailable(){
-  return typeof window.jspdf !== 'undefined' && window.jspdf && typeof window.jspdf.jsPDF === 'function';
-}
-
-document.getElementById('sendResumoBtn').addEventListener('click', () => {
-  if (!currentType){ return; }
-  if (!validateContact()){ return; }
-  try { buildSummary(); } catch(e){}
-  goTo(3);
-});
-
-document.getElementById('downloadBtn').addEventListener('click', () => {
-  if (!currentType) return;
-  try { buildSummary(); } catch(e){}
-  if (!pdfAvailable()){
-    triggerDownload(summaryText || 'Resumo indisponível.', `monolith-bancada-${currentType}-resumo.txt`);
-    return;
-  }
-  try {
-    const filename = buildFilename('pdf');
-    const pdfDoc = buildPDFDoc();
-    triggerDownloadBlob(pdfDoc.output('blob'), filename);
-  } catch (e){
-    triggerDownload(summaryText || 'Resumo indisponível.', `monolith-bancada-${currentType}-resumo.txt`);
-  }
-});
+# Mapa do projeto — Questionário de Bancadas Monolith
+
+Este documento existe para você (ou eu, numa próxima conversa) achar rápido
+onde mexer, sem precisar reler o projeto inteiro. Separei tudo em arquivos
+menores — cada um cuida de uma coisa só.
+
+## Estrutura de pastas
+
+```
+monolith-questionario/
+├── index.html          → só a estrutura da página (HTML), sem estilo nem lógica
+├── styles.css           → toda a aparência (cores, fontes, espaçamentos, grade)
+├── schemas.js           → os 6 tipos de bancada e as perguntas de cada um
+├── drawing-engine.js     → o "motor" que calcula e desenha planta/isométrica/elevação
+├── app.js               → a lógica da página: navegação, formulário, PDF, cotas editáveis
+├── assets/logo.png       → a logo (fundo transparente)
+└── MAPA.md               → este arquivo
+```
+
+**Importante:** os arquivos `.js` dependem uns dos outros e são carregados nesta
+ordem no fim do `index.html`: `schemas.js` → `drawing-engine.js` → `app.js`.
+Se precisar adicionar um novo arquivo `.js`, ele deve entrar nessa ordem
+(ou depois de `app.js`, nunca antes de `schemas.js`).
+
+Para publicar (GitHub Pages, Netlify etc.), suba a **pasta inteira** — não só
+o `index.html`. Os arquivos `.css`/`.js`/`assets/logo.png` precisam estar
+juntos, nos mesmos caminhos relativos.
+
+---
+
+## Onde mexer para cada tipo de ajuste
+
+| Quero ajustar... | Arquivo | Onde dentro do arquivo |
+|---|---|---|
+| Uma pergunta do formulário (texto, tipo de campo, sugestão de preenchimento) | `schemas.js` | objeto `SCHEMAS`, dentro do tipo de bancada (`ilha`, `reta`, `l`, `u`, `especial`, `wc`) |
+| Adicionar/remover um tipo de bancada | `schemas.js` | `SCHEMAS` (adicionar bloco) + `TYPE_ORDER` (adicionar chave) + `ICONS` (ícone planta/iso do cartão) |
+| Ícone (planta+isométrica) do cartão de seleção de tipo | `schemas.js` | objeto `ICONS`, chave `plan` e `iso` de cada tipo |
+| Cores, fontes, tamanho das vistas, espaçamento dos cartões | `styles.css` | procure pela classe (ex.: `.type-card`, `.dim-editor`, `.td-panel`) |
+| Fundo da página, tons de cinza, azul de destaque | `styles.css` | seletor `:root` no topo (variáveis `--paper`, `--stone`, `--blue` etc.) |
+| Como a planta baixa é desenhada (cotas, hachura, paredes) | `drawing-engine.js` | função `buildPlanSVG` |
+| Como a isométrica é desenhada (extrusão 3D, hachura, paredes) | `drawing-engine.js` | função `buildIsoSVG` |
+| Como a elevação é desenhada (altura, frontão, saia, parede) | `drawing-engine.js` | função `buildElevationSVG` |
+| A forma/geometria de cada tipo de bancada (largura x profundidade, formato do L/U/Especial/WC) | `drawing-engine.js` | função `buildFootprint` |
+| Como o sistema lê a posição da cuba/cooktop a partir do texto digitado | `drawing-engine.js` | funções `parseSize` e `parsePosition` |
+| Limites mínimo/máximo de cada cota (ex.: largura 10–500cm) | `app.js` | função `getLimits` |
+| Textos de sugestão dos campos de texto livre (área molhada, recorte de cuba etc.) | `app.js` | `FIELD_PLACEHOLDERS` |
+| O comportamento das cotas editáveis (aparecer antes, sumir se vazia, botão Atualizar) | `app.js` | função `renderDimEditor` |
+| A lista de perguntas que aparecem normalmente no formulário (fechamentos, áreas, recortes, torneiras, paredes) | `app.js` | função `renderField` |
+| O resumo final (Etapa 3) — o que aparece na "ficha técnica" | `app.js` | função `buildSummary` |
+| O desenho técnico dentro do resumo final | `app.js` | função `renderTechDrawing` |
+| O conteúdo do PDF gerado | `app.js` | função `buildPDFDoc` |
+| O nome do arquivo PDF salvo | `app.js` | função `buildFilename` |
+| Validação dos campos Nome/Telefone/E-mail | `app.js` | função `validateContact` |
+| Navegação entre as 3 etapas (Tipo → Detalhes → Resumo) | `app.js` | função `goTo` |
+| Texto/estrutura fixa da página (títulos, botões, layout das etapas) | `index.html` | procure pelo texto ou `id` do elemento |
+
+---
+
+## Os 6 tipos de bancada (chaves internas)
+
+`ilha`, `reta`, `l`, `u`, `especial`, `wc` — essas chaves aparecem em
+`schemas.js` (`SCHEMAS`, `ICONS`, `TYPE_ORDER`) e em `drawing-engine.js`
+(`buildFootprint`). Ao editar um tipo, é comum precisar tocar nos dois
+arquivos.
+
+## Fluxo geral da aplicação (em `app.js`)
+
+1. `selectType(key)` — usuário escolhe o tipo → zera respostas → `renderForm`
+2. `renderForm(key)` — monta o formulário da Etapa 2 a partir do `SCHEMAS`;
+   a seção "Dimensões" vira o desenho editável (`renderDimEditor`) em vez de
+   campos de texto comuns
+3. `renderDimEditor()` — desenha planta/iso/elevação com as cotas tocáveis
+4. Botão "Gerar resumo" → `buildSummary()` → monta a ficha técnica e chama
+   `renderTechDrawing()` para o desenho final
+5. Botão "Salvar PDF" → `buildPDFDoc()` + download
+
+## Testando localmente
+
+Não dá para abrir `index.html` direto do disco em alguns navegadores sem
+servidor (por causa dos `<script src="...">` e do CDN do jsPDF). Se for
+testar localmente antes de publicar, rode um servidor simples dentro da
+pasta, por exemplo:
+
+```
+python3 -m http.server 8000
+```
+
+e abra `http://localhost:8000` no navegador.

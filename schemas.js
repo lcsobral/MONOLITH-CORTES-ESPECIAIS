@@ -1,357 +1,569 @@
-/* ---------------------------------------------------------
-   ICONS (simple blueprint-style floor plan outlines)
---------------------------------------------------------- */
-const ICONS = {
-  ilha: {
-    plan: `<svg viewBox="0 0 100 78" fill="none" stroke="currentColor" stroke-linejoin="round">
-    <g stroke="#2451D6" stroke-width="1.1">
-      <line x1="22.0" y1="12.0" x2="86.0" y2="12.0"/>
-      <line x1="22.0" y1="8.0" x2="22.0" y2="16.0"/>
-      <line x1="86.0" y1="8.0" x2="86.0" y2="16.0"/>
-      <line x1="12.0" y1="22.0" x2="12.0" y2="64.0"/>
-      <line x1="8.0" y1="22.0" x2="16.0" y2="22.0"/>
-      <line x1="8.0" y1="64.0" x2="16.0" y2="64.0"/>
-    </g>
-    <polygon points="22.0,22.0 86.0,22.0 86.0,64.0 22.0,64.0" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="86.0,22.0 86.0,64.0 79.0,64.0 79.0,22.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="22.0,64.0 22.0,22.0 29.0,22.0 29.0,64.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="42.0,32.0 66.0,32.0 66.0,52.0 42.0,52.0" fill="none" stroke-width="1.3"/>
-    <circle cx="54.0" cy="55.0" r="2" stroke-width="1.2"/>
-    <g stroke="#3D8A5A" stroke-width="1">
-      <line x1="22.0" y1="25.0" x2="42.0" y2="25.0"/>
-      <line x1="22.0" y1="22.0" x2="22.0" y2="28.0"/>
-      <line x1="42.0" y1="22.0" x2="42.0" y2="28.0"/>
-      <line x1="35.0" y1="22.0" x2="35.0" y2="32.0"/>
-      <line x1="32.0" y1="22.0" x2="38.0" y2="22.0"/>
-      <line x1="32.0" y1="32.0" x2="38.0" y2="32.0"/>
-    </g>
-</svg>`,
-    iso: `<svg viewBox="0 0 176 116" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
-    <polygon points="65.5,76.2 147.1,29.1 147.1,40.9 65.5,88.0" fill="#F7F6F3"/>
-    <polygon points="12.0,45.3 65.5,76.2 65.5,88.0 12.0,57.1" fill="url(#hatchIso)"/>
-    <polygon points="65.5,76.2 147.1,29.1 93.6,-1.8 12.0,45.3" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="78.3,54.2 108.9,36.5 83.4,21.8 52.8,39.4" fill="#EFEDE7" stroke-width="1.2"/>
-    <ellipse cx="64.3" cy="28.4" rx="3.2" ry="1.6" transform="rotate(-20 64.3 28.4)" stroke-width="1.2"/>
-</svg>`
-  },
-  reta: {
-    plan: `<svg viewBox="0 0 124 52" fill="none" stroke="currentColor" stroke-linejoin="round">
-    <g stroke="#2451D6" stroke-width="1.1">
-      <line x1="22.0" y1="12.0" x2="110.0" y2="12.0"/>
-      <line x1="22.0" y1="8.0" x2="22.0" y2="16.0"/>
-      <line x1="110.0" y1="8.0" x2="110.0" y2="16.0"/>
-      <line x1="12.0" y1="22.0" x2="12.0" y2="38.0"/>
-      <line x1="8.0" y1="22.0" x2="16.0" y2="22.0"/>
-      <line x1="8.0" y1="38.0" x2="16.0" y2="38.0"/>
-    </g>
-    <polygon points="22.0,22.0 110.0,22.0 110.0,38.0 22.0,38.0" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="110.0,22.0 110.0,38.0 103.0,38.0 103.0,22.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="22.0,38.0 22.0,22.0 29.0,22.0 29.0,38.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="44.0,25.0 64.0,25.0 64.0,35.0 44.0,35.0" fill="none" stroke-width="1.3"/>
-    <circle cx="54.0" cy="36.5" r="2" stroke-width="1.2"/>
-    <g stroke="#3D8A5A" stroke-width="1">
-      <line x1="22.0" y1="18.0" x2="44.0" y2="18.0"/>
-      <line x1="22.0" y1="15.0" x2="22.0" y2="21.0"/>
-      <line x1="44.0" y1="15.0" x2="44.0" y2="21.0"/>
-      <line x1="37.0" y1="22.0" x2="37.0" y2="25.0"/>
-      <line x1="34.0" y1="22.0" x2="40.0" y2="22.0"/>
-      <line x1="34.0" y1="25.0" x2="40.0" y2="25.0"/>
-    </g>
-</svg>`,
-    iso: `<svg viewBox="0 0 176 116" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
-    <polygon points="32.8,76.0 147.1,10.0 147.1,22.0 32.8,88.0" fill="#F7F6F3"/>
-    <polygon points="12.0,64.0 32.8,76.0 32.8,88.0 12.0,76.0" fill="url(#hatchIso)"/>
-    <polygon points="32.8,76.0 147.1,10.0 126.3,-2.0 12.0,64.0" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="57.5,57.2 83.4,42.2 70.5,34.8 44.5,49.8" fill="#EFEDE7" stroke-width="1.2"/>
-    <ellipse cx="55.5" cy="41.1" rx="3.2" ry="1.6" transform="rotate(-20 55.5 41.1)" stroke-width="1.2"/>
-</svg>`
-  },
-  l: {
-    plan: `<svg viewBox="0 0 112 82" fill="none" stroke="currentColor" stroke-linejoin="round">
-    <g stroke="#2451D6" stroke-width="1.1">
-      <line x1="22.0" y1="12.0" x2="98.0" y2="12.0"/>
-      <line x1="22.0" y1="8.0" x2="22.0" y2="16.0"/>
-      <line x1="98.0" y1="8.0" x2="98.0" y2="16.0"/>
-      <line x1="12.0" y1="22.0" x2="12.0" y2="68.0"/>
-      <line x1="8.0" y1="22.0" x2="16.0" y2="22.0"/>
-      <line x1="8.0" y1="68.0" x2="16.0" y2="68.0"/>
-    </g>
-    <polygon points="22.0,22.0 98.0,22.0 98.0,44.0 50.0,44.0 50.0,68.0 22.0,68.0" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="98.0,22.0 98.0,44.0 91.0,44.0 91.0,22.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="50.0,44.0 50.0,68.0 57.0,68.0 57.0,44.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="22.0,68.0 22.0,22.0 29.0,22.0 29.0,68.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="64.0,26.0 84.0,26.0 84.0,40.0 64.0,40.0" fill="none" stroke-width="1.3"/>
-    <circle cx="74.0" cy="41.5" r="2" stroke-width="1.2"/>
-    <g stroke="#3D8A5A" stroke-width="1">
-      <line x1="22.0" y1="19.0" x2="64.0" y2="19.0"/>
-      <line x1="22.0" y1="16.0" x2="22.0" y2="22.0"/>
-      <line x1="64.0" y1="16.0" x2="64.0" y2="22.0"/>
-      <line x1="57.0" y1="22.0" x2="57.0" y2="26.0"/>
-      <line x1="54.0" y1="22.0" x2="60.0" y2="22.0"/>
-      <line x1="54.0" y1="26.0" x2="60.0" y2="26.0"/>
-    </g>
-</svg>`,
-    iso: `<svg viewBox="0 0 176 116" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
-    <polygon points="67.8,67.4 160.0,14.2 160.0,25.4 67.8,78.6" fill="#F7F6F3"/>
-    <polygon points="133.3,-1.2 75.1,32.4 75.1,43.6 133.3,10.0" fill="#F7F6F3"/>
-    <polygon points="75.1,32.4 46.0,15.6 46.0,26.8 75.1,43.6" fill="url(#hatchIso)"/>
-    <polygon points="12.0,35.2 67.8,67.4 67.8,78.6 12.0,46.4" fill="url(#hatchIso)"/>
-    <polygon points="67.8,67.4 160.0,14.2 133.3,-1.2 75.1,32.4 46.0,15.6 12.0,35.2" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="113.9,35.2 138.2,21.2 121.2,11.4 96.9,25.4" fill="#EFEDE7" stroke-width="1.2"/>
-    <ellipse cx="107.2" cy="17.4" rx="3.2" ry="1.6" transform="rotate(-20 107.2 17.4)" stroke-width="1.2"/>
-</svg>`
-  },
-  u: {
-    plan: `<svg viewBox="0 0 128 98" fill="none" stroke="currentColor" stroke-linejoin="round">
-    <g stroke="#2451D6" stroke-width="1.1">
-      <line x1="22.0" y1="12.0" x2="114.0" y2="12.0"/>
-      <line x1="22.0" y1="8.0" x2="22.0" y2="16.0"/>
-      <line x1="114.0" y1="8.0" x2="114.0" y2="16.0"/>
-      <line x1="12.0" y1="22.0" x2="12.0" y2="84.0"/>
-      <line x1="8.0" y1="22.0" x2="16.0" y2="22.0"/>
-      <line x1="8.0" y1="84.0" x2="16.0" y2="84.0"/>
-    </g>
-    <polygon points="22.0,22.0 44.0,22.0 44.0,56.0 92.0,56.0 92.0,22.0 114.0,22.0 114.0,84.0 22.0,84.0" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="44.0,22.0 44.0,56.0 51.0,56.0 51.0,22.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="92.0,56.0 92.0,22.0 85.0,22.0 85.0,56.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="114.0,22.0 114.0,84.0 107.0,84.0 107.0,22.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="22.0,84.0 22.0,22.0 29.0,22.0 29.0,84.0" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="58.0,66.0 78.0,66.0 78.0,80.0 58.0,80.0" fill="none" stroke-width="1.3"/>
-    <circle cx="68.0" cy="82.0" r="2" stroke-width="1.2"/>
-    <g stroke="#3D8A5A" stroke-width="1">
-      <line x1="22.0" y1="59.0" x2="58.0" y2="59.0"/>
-      <line x1="22.0" y1="56.0" x2="22.0" y2="62.0"/>
-      <line x1="58.0" y1="56.0" x2="58.0" y2="62.0"/>
-      <line x1="51.0" y1="22.0" x2="51.0" y2="66.0"/>
-      <line x1="48.0" y1="22.0" x2="54.0" y2="22.0"/>
-      <line x1="48.0" y1="66.0" x2="54.0" y2="66.0"/>
-    </g>
-</svg>`,
-    iso: `<svg viewBox="0 0 176 116" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
-    <polygon points="66.4,79.9 85.7,68.8 85.7,76.9 66.4,88.0" fill="#F7F6F3"/>
-    <polygon points="127.8,44.4 147.1,33.3 147.1,41.4 127.8,52.5" fill="#F7F6F3"/>
-    <polygon points="85.7,68.8 55.9,51.5 55.9,59.6 85.7,76.9" fill="url(#hatchIso)"/>
-    <polygon points="12.0,48.5 66.4,79.9 66.4,88.0 12.0,56.6" fill="url(#hatchIso)"/>
-    <polygon points="66.4,79.9 85.7,68.8 55.9,51.5 98.0,27.2 127.8,44.4 147.1,33.3 92.7,1.9 12.0,48.5" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="59.4,39.4 76.9,29.2 64.6,22.2 47.1,32.3" fill="#EFEDE7" stroke-width="1.2"/>
-    <ellipse cx="54.1" cy="26.2" rx="3.2" ry="1.6" transform="rotate(-20 54.1 26.2)" stroke-width="1.2"/>
-</svg>`
-  },
-  especial: {
-    plan: `<svg viewBox="0 0 116 96" fill="none" stroke="currentColor" stroke-linejoin="round">
-    <g stroke="#2451D6" stroke-width="1.1">
-      <line x1="22.0" y1="12.0" x2="102.0" y2="12.0"/>
-      <line x1="22.0" y1="8.0" x2="22.0" y2="16.0"/>
-      <line x1="102.0" y1="8.0" x2="102.0" y2="16.0"/>
-      <line x1="12.0" y1="22.0" x2="12.0" y2="82.0"/>
-      <line x1="8.0" y1="22.0" x2="16.0" y2="22.0"/>
-      <line x1="8.0" y1="82.0" x2="16.0" y2="82.0"/>
-    </g>
-    <polygon points="24.0,36.0 70.0,22.0 102.0,40.0 90.0,70.0 54.0,82.0 22.0,62.0" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="102.0,40.0 90.0,70.0 83.5,67.4 95.5,37.4" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="22.0,62.0 24.0,36.0 31.0,36.5 29.0,62.5" fill="url(#hatchPlan)" stroke-width="1.4"/>
-    <polygon points="50.0,42.0 74.0,42.0 74.0,60.0 50.0,60.0" fill="none" stroke-width="1.3"/>
-    <circle cx="62.0" cy="39.0" r="2" stroke-width="1.2"/>
-    <g stroke="#3D8A5A" stroke-width="1">
-      <line x1="22.0" y1="35.0" x2="50.0" y2="35.0"/>
-      <line x1="22.0" y1="32.0" x2="22.0" y2="38.0"/>
-      <line x1="50.0" y1="32.0" x2="50.0" y2="38.0"/>
-      <line x1="43.0" y1="22.0" x2="43.0" y2="42.0"/>
-      <line x1="40.0" y1="22.0" x2="46.0" y2="22.0"/>
-      <line x1="40.0" y1="42.0" x2="46.0" y2="42.0"/>
-    </g>
-</svg>`,
-    iso: `<svg viewBox="0 0 176 116" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
-    <polygon points="49.8,75.5 130.9,50.6 130.9,63.0 49.8,88.0" fill="#F7F6F3"/>
-    <polygon points="130.9,50.6 149.8,11.6 149.8,24.0 130.9,63.0" fill="#F7F6F3"/>
-    <polygon points="12.0,56.8 49.8,75.5 49.8,88.0 12.0,69.3" fill="url(#hatchIso)"/>
-    <polygon points="49.8,75.5 130.9,50.6 149.8,11.6 93.1,-2.5 28.2,16.2 12.0,56.8" fill="#FCFCFA" stroke-width="2"/>
-    <polygon points="76.8,50.6 109.3,31.8 85.0,17.8 52.5,36.5" fill="#EFEDE7" stroke-width="1.2"/>
-    <ellipse cx="97.1" cy="43.5" rx="3.2" ry="1.6" transform="rotate(-20 97.1 43.5)" stroke-width="1.2"/>
-</svg>`
-  },
-  wc: {
-    plan: `<svg viewBox="0 0 116 54" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12.0,28.0 28.0,28.0 28.0,12.0 104.0,12.0 104.0,42.0 12.0,42.0"/><polygon points="28.0,28.0 28.0,12.0 33.0,12.0 33.0,28.0" fill="url(#hatchPlan)" stroke-width="1.4"/><polygon points="12.0,42.0 12.0,28.0 17.0,28.0 17.0,42.0" fill="url(#hatchPlan)" stroke-width="1.4"/></svg>`,
-    iso: `<svg viewBox="0 0 150 93" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><polygon points="28.2,64.6 44.4,55.3 44.4,64.6 28.2,74.0" fill="#F7F6F3"/><polygon points="60.6,64.6 137.6,20.2 137.6,29.5 60.6,74.0" fill="#F7F6F3"/><polygon points="44.4,55.3 60.6,64.6 60.6,74.0 44.4,64.6" fill="url(#hatchIso)"/><polygon points="14.0,56.5 28.2,64.6 28.2,74.0 14.0,65.8" fill="url(#hatchIso)"/><polygon points="28.2,64.6 44.4,55.3 60.6,64.6 137.6,20.2 107.2,2.6 14.0,56.5" fill="#FCFCFA" stroke-width="2"/></svg>`
-  },
-};
+const COS30 = Math.cos(Math.PI/6);
+const SIN30 = 0.5;
+
+function isoProject(x, y, z, ox, oy, s){
+  return [ ox + (x - y) * COS30 * s, oy - (x + y) * SIN30 * s - z * s ];
+}
+function polyCentroid(pts){
+  let cx=0, cy=0;
+  pts.forEach(p => { cx+=p[0]; cy+=p[1]; });
+  return [cx/pts.length, cy/pts.length];
+}
+function classifyEdges(planPts, ox, oy, s, H){
+  const top = planPts.map(([x,y]) => isoProject(x,y,H,ox,oy,s));
+  const [cx,cy] = polyCentroid(top);
+  const n = top.length;
+  const edges = [];
+  for (let i=0;i<n;i++){
+    const p1 = top[i], p2 = top[(i+1)%n];
+    const dx = p2[0]-p1[0], dy = p2[1]-p1[1];
+    const n1 = [dy, -dx], n2 = [-dy, dx];
+    const mid = [(p1[0]+p2[0])/2, (p1[1]+p2[1])/2];
+    const toC = [cx-mid[0], cy-mid[1]];
+    const d1 = n1[0]*toC[0] + n1[1]*toC[1];
+    const outward = d1 < 0 ? n1 : n2;
+    const length = Math.hypot(dx,dy);
+    const visible = outward[1] > 0.2*length;
+    const pdx = planPts[(i+1)%n][0]-planPts[i][0];
+    const pdy = planPts[(i+1)%n][1]-planPts[i][1];
+    const isEnd = Math.abs(pdy) > Math.abs(pdx);
+    edges.push({p1:planPts[i], p2:planPts[(i+1)%n], top1:p1, top2:p2, visible, isEnd, length});
+  }
+  return {edges, top};
+}
+
+function num(v, fallback){
+  if (v === undefined || v === null || v === '') return fallback;
+  const n = parseFloat(String(v).replace(',', '.'));
+  return (isFinite(n) && n > 0) ? n : fallback;
+}
+
+// Returns { pts, dims, W, D, walls } where walls = { fundo:[[p1,p2],...], esquerda:[[p1,p2],...], direita:[[p1,p2],...] }
+function buildFootprint(type, answers){
+  if (type === 'ilha'){
+    const w = num(answers.largura, 200);
+    const d = num(answers.profundidade, 60);
+    return {
+      pts: [[0,0],[w,0],[w,d],[0,d]],
+      dims: [ {id:'largura', value:w, edge:[[0,0],[w,0]]}, {id:'profundidade', value:d, edge:[[0,0],[0,d]]} ],
+      W:w, D:d,
+      walls: null // island: no walls ever
+    };
+  }
+  if (type === 'reta'){
+    const w = num(answers.largura, 250);
+    const d = num(answers.profundidade, 60);
+    return {
+      pts: [[0,0],[w,0],[w,d],[0,d]],
+      dims: [ {id:'largura', value:w, edge:[[0,0],[w,0]]}, {id:'profundidade', value:d, edge:[[0,0],[0,d]]} ],
+      W:w, D:d,
+      walls: {
+        direita: [[[w,0],[w,d]]],
+        fundo: [[[w,d],[0,d]]],
+        esquerda: [[[0,d],[0,0]]]
+      }
+    };
+  }
+  if (type === 'l'){
+    const La = num(answers.largura_esquerda, 150);
+    const Lb = num(answers.largura_direita, 150);
+    const Da = num(answers.profundidade_esquerda, 60);
+    const Db = num(answers.profundidade_direita, 60);
+    const pts = [[0,0],[La,0],[La,Da],[Db,Da],[Db,Lb],[0,Lb]];
+    return {
+      pts,
+      dims: [
+        {id:'largura_esquerda', value:La, edge:[[0,0],[La,0]]},
+        {id:'profundidade_esquerda', value:Da, edge:[[La,0],[La,Da]]},
+        {id:'profundidade_direita', value:Db, edge:[[0,0],[Db,0]]},
+        {id:'largura_direita', value:Lb, edge:[[0,0],[0,Lb]]}
+      ],
+      W: Math.max(La,Db), D: Math.max(Lb,Da),
+      walls: {
+        direita: [[[La,0],[La,Da]]],
+        fundo: [[[La,Da],[Db,Da]], [[Db,Lb],[0,Lb]]],
+        esquerda: [[[0,Lb],[0,0]]]
+      }
+    };
+  }
+  if (type === 'u'){
+    const Pe = num(answers.profundidade_esquerda, 60);
+    const Pd = num(answers.profundidade_direita, 60);
+    const Gf = num(answers.largura_fundo, 120);
+    const Pf = num(answers.profundidade_fundo, 60);
+    const Le = num(answers.largura_esquerda, 200);
+    const Ld = num(answers.largura_direita, 200);
+    const Dtot = Math.max(Le, Ld, Pf+10);
+    const notchFront = Math.max(0, Dtot - Pf);
+    const W = Pe + Gf + Pd;
+    const pts = [[0,0],[Pe,0],[Pe,notchFront],[Pe+Gf,notchFront],[Pe+Gf,0],[W,0],[W,Dtot],[0,Dtot]];
+    return {
+      pts,
+      dims: [
+        {id:'profundidade_esquerda', value:Pe, edge:[[0,0],[Pe,0]]},
+        {id:'largura_fundo', value:Gf, edge:[[Pe,0],[Pe+Gf,0]]},
+        {id:'profundidade_direita', value:Pd, edge:[[Pe+Gf,0],[W,0]]},
+        {id:'largura_esquerda', value:Dtot, edge:[[0,0],[0,Dtot]]},
+        {id:'profundidade_fundo', value:Pf, edge:[[Pe,notchFront],[Pe,Dtot]]}
+      ],
+      W, D: Dtot,
+      walls: {
+        direita: [[[W,0],[W,Dtot]]],
+        fundo: [[[W,Dtot],[0,Dtot]]],
+        esquerda: [[[0,Dtot],[0,0]]]
+      }
+    };
+  }
+  if (type === 'especial'){
+    const we = num(answers.largura_esquerda, 80);
+    const wc = num(answers.largura_centro, 80);
+    const wd = num(answers.largura_direita, 80);
+    const de = num(answers.profundidade_esquerda, 50);
+    const dc = num(answers.profundidade_centro, 65);
+    const dd = num(answers.profundidade_direita, 50);
+    const W = we+wc+wd;
+    const pts = [
+      [0,0],[W,0],[W,dd],[we+wc,dd],[we+wc,dc],[we,dc],[we,de],[0,de]
+    ];
+    return {
+      pts,
+      dims: [
+        {id:'largura_esquerda', value:we, edge:[[0,0],[we,0]]},
+        {id:'largura_centro', value:wc, edge:[[we,0],[we+wc,0]]},
+        {id:'largura_direita', value:wd, edge:[[we+wc,0],[W,0]]},
+        {id:'profundidade_esquerda', value:de, edge:[[0,0],[0,de]]},
+        {id:'profundidade_centro', value:dc, edge:[[we,dc],[we,0]]},
+        {id:'profundidade_direita', value:dd, edge:[[we+wc,dd],[we+wc,0]]}
+      ],
+      W, D: Math.max(de,dc,dd),
+      walls: {
+        direita: [[[W,0],[W,dd]]],
+        fundo: [[[W,dd],[we+wc,dd]], [[we+wc,dc],[we,dc]], [[we,de],[0,de]]],
+        esquerda: [[[0,de],[0,0]]]
+      }
+    };
+  }
+  if (type === 'wc'){
+    const W = num(answers.largura, 144.1);
+    const D = num(answers.profundidade, 45);
+    const abaW = num(answers.largura_aba, 15);
+    const abaD = num(answers.profundidade_aba, 15);
+    const A=[0,D-abaD], B=[abaW,D-abaD], C=[abaW,0], Dp=[abaW+W,0], E=[abaW+W,D], F=[0,D];
+    const pts = [A,B,C,Dp,E,F];
+    return {
+      pts,
+      dims: [
+        {id:'largura', value:W, edge:[C,Dp]},
+        {id:'largura_aba', value:abaW, edge:[A,B]},
+        {id:'profundidade', value:D, edge:[F,A]},
+        {id:'profundidade_aba', value:abaD, edge:[B,C]}
+      ],
+      W: abaW+W, D,
+      walls: {
+        direita: [[Dp,E]],
+        fundo: [[E,F]],
+        esquerda: [[F,A]]
+      },
+      // generic centroid-based visibility misjudges this stepped shape, so the
+      // visible/hatched iso edges are given explicitly here instead
+      isoOverride: {
+        visible: [[A,B],[B,C],[C,Dp],[F,A]],
+        hatch: [[B,C],[F,A]]
+      }
+    };
+  }
+  return { pts:[[0,0],[100,0],[100,60],[0,60]], dims:[], W:100, D:60, walls:null };
+}
+
+function parseSize(text, fallbackW, fallbackD){
+  if (!text) return { w: fallbackW, d: fallbackD };
+  const m3 = text.match(/(\d+(?:[.,]\d+)?)\s*[x×]\s*(\d+(?:[.,]\d+)?)\s*[x×]\s*(\d+(?:[.,]\d+)?)/i);
+  if (m3) return { w: parseFloat(m3[1].replace(',','.')), d: parseFloat(m3[3].replace(',','.')) };
+  const m2 = text.match(/(\d+(?:[.,]\d+)?)\s*[x×]\s*(\d+(?:[.,]\d+)?)/i);
+  if (m2) return { w: parseFloat(m2[1].replace(',','.')), d: parseFloat(m2[2].replace(',','.')) };
+  return { w: fallbackW, d: fallbackD };
+}
+
+function parsePosition(text, totalW, totalD, size){
+  const result = { x0:null, x1:null, y0:null, y1:null };
+  if (text){
+    const re = /(\d+(?:[.,]\d+)?)\s*cm[^\n\d]{0,20}?(lateral\s*esquerda|lateral\s*direita|parte\s*inferior|parte\s*posterior)/gi;
+    let m;
+    const left=[], right=[], front=[], back=[];
+    while ((m = re.exec(text)) !== null){
+      const numV = parseFloat(m[1].replace(',', '.'));
+      const kw = m[2].toLowerCase().replace(/\s+/g,' ');
+      if (kw.includes('lateral esquerda')) left.push(numV);
+      else if (kw.includes('lateral direita')) right.push(numV);
+      else if (kw.includes('parte inferior')) front.push(numV);
+      else if (kw.includes('parte posterior')) back.push(numV);
+    }
+    if (left.length >= 2){ result.x0 = Math.min(left[0],left[1]); result.x1 = Math.max(left[0],left[1]); }
+    else if (left.length === 1 && right.length >= 1){ result.x0 = left[0]; result.x1 = totalW - right[0]; }
+    else if (left.length === 1){ result.x0 = left[0]; }
+    else if (right.length === 1){ result.x1 = totalW - right[0]; }
+
+    if (front.length >= 1 && back.length >= 1){ result.y0 = front[0]; result.y1 = totalD - back[0]; }
+    else if (front.length === 1){ result.y0 = front[0]; }
+    else if (back.length === 1){ result.y1 = totalD - back[0]; }
+  }
+  let { w, d } = size;
+  if (result.x0 !== null && result.x1 === null) result.x1 = result.x0 + w;
+  if (result.x1 !== null && result.x0 === null) result.x0 = result.x1 - w;
+  if (result.x0 === null && result.x1 === null){ result.x0 = (totalW - w)/2; result.x1 = result.x0 + w; }
+  if (result.x0 > result.x1) { const t=result.x0; result.x0=result.x1; result.x1=t; }
+
+  if (result.y0 !== null && result.y1 === null) result.y1 = result.y0 + d;
+  if (result.y1 !== null && result.y0 === null) result.y0 = result.y1 - d;
+  if (result.y0 === null && result.y1 === null){ result.y0 = (totalD - d)/2; result.y1 = result.y0 + d; }
+  if (result.y0 > result.y1) { const t=result.y0; result.y0=result.y1; result.y1=t; }
+
+  const margin = Math.min(totalW, totalD) * 0.03;
+  result.x0 = Math.max(margin, Math.min(result.x0, totalW - margin - 2));
+  result.x1 = Math.max(result.x0 + 5, Math.min(result.x1, totalW - margin));
+  result.y0 = Math.max(margin, Math.min(result.y0, totalD - margin - 2));
+  result.y1 = Math.max(result.y0 + 5, Math.min(result.y1, totalD - margin));
+
+  return [result.x0, result.y0, result.x1, result.y1];
+}
+
+function fmtN(n){ return (Math.round(n*10)/10).toString(); }
+function fmtPts(pts){ return pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' '); }
+function isEndEdge(p1,p2){
+  const dx = p2[0]-p1[0], dy = p2[1]-p1[1];
+  return Math.abs(dy) > Math.abs(dx);
+}
+function centroid2(pts){
+  let cx=0,cy=0; pts.forEach(p=>{cx+=p[0];cy+=p[1];});
+  return [cx/pts.length, cy/pts.length];
+}
+function inwardNormal(p1,p2,c){
+  const dx=p2[0]-p1[0], dy=p2[1]-p1[1];
+  const n1=[dy,-dx], n2=[-dy,dx];
+  const mid=[(p1[0]+p2[0])/2,(p1[1]+p2[1])/2];
+  const toC=[c[0]-mid[0], c[1]-mid[1]];
+  const d1 = n1[0]*toC[0]+n1[1]*toC[1];
+  const inward = d1>0 ? n1 : n2;
+  const len = Math.hypot(inward[0],inward[1]);
+  return [inward[0]/len, inward[1]/len];
+}
+function outwardNormal(p1,p2,c){
+  const [ix,iy] = inwardNormal(p1,p2,c);
+  return [-ix,-iy];
+}
+
+/* ---------------- PLAN VIEW (with walls) ---------------- */
+function buildPlanSVG(pts, dims, sinkRect, cooktopRect, faucetPt, activeWalls, opts){
+  opts = opts || {};
+  const editable = !!opts.editable;
+  const hasValues = opts.hasValues || {};
+  const band = 7, margin = 16, extraTop = 34, extraLeft = 34;
+  const xs = pts.map(p=>p[0]), ys = pts.map(p=>p[1]);
+  const minx=Math.min(...xs), maxx=Math.max(...xs), miny=Math.min(...ys), maxy=Math.max(...ys);
+  const shift = [extraLeft-minx, extraTop-miny];
+  const spts = pts.map(p => [p[0]+shift[0], p[1]+shift[1]]);
+  const c = centroid2(spts);
+  const n = spts.length;
+
+  const hatchBands = [];
+  for (let i=0;i<n;i++){
+    const p1=spts[i], p2=spts[(i+1)%n];
+    if (isEndEdge(p1,p2)){
+      const [inx,iny] = inwardNormal(p1,p2,c);
+      hatchBands.push([p1,p2,[p2[0]+inx*band,p2[1]+iny*band],[p1[0]+inx*band,p1[1]+iny*band]]);
+    }
+  }
+
+  const vbW = (maxx-minx) + extraLeft + margin;
+  const vbH = (maxy-miny) + extraTop + margin;
+
+  let s = `<svg viewBox="0 0 ${vbW.toFixed(0)} ${vbH.toFixed(0)}" fill="none" stroke="currentColor" stroke-linejoin="round">`;
+
+  // WALLS drawn first (behind), offset outward from the counter edge
+  if (activeWalls && activeWalls.length){
+    activeWalls.forEach(([p1,p2]) => {
+      const a = [p1[0]+shift[0], p1[1]+shift[1]];
+      const b = [p2[0]+shift[0], p2[1]+shift[1]];
+      const [ox,oy] = outwardNormal(a,b,c);
+      const wOff = 5;
+      const wa = [a[0]+ox*wOff, a[1]+oy*wOff];
+      const wb = [b[0]+ox*wOff, b[1]+oy*wOff];
+      s += `<line x1="${wa[0].toFixed(1)}" y1="${wa[1].toFixed(1)}" x2="${wb[0].toFixed(1)}" y2="${wb[1].toFixed(1)}" stroke-width="5" stroke="#8A887E" stroke-linecap="square"/>`;
+    });
+  }
+
+  s += `<polygon points="${fmtPts(spts)}" fill="#FCFCFA" stroke-width="2"/>`;
+  hatchBands.forEach(q => { s += `<polygon points="${fmtPts(q)}" fill="url(#hatchPlan)" stroke-width="1.3"/>`; });
+
+  const labels = [];
+  dims.forEach(d => {
+    const known = editable ? !!hasValues[d.id] : true;
+    const [p1,p2] = d.edge;
+    const a = [p1[0]+shift[0], p1[1]+shift[1]];
+    const b = [p2[0]+shift[0], p2[1]+shift[1]];
+    const horiz = Math.abs(a[1]-b[1]) < 0.01;
+    const offset = 12;
+    let la, lb, tickA, tickB, labelPos, rot=0;
+    if (horiz){
+      const yy = Math.min(a[1],b[1]) - offset;
+      la = [a[0], yy]; lb = [b[0], yy];
+      tickA = [[a[0],yy-4],[a[0],yy+4]];
+      tickB = [[b[0],yy-4],[b[0],yy+4]];
+      labelPos = [(a[0]+b[0])/2, yy-3];
+    } else {
+      const xx = Math.min(a[0],b[0]) - offset;
+      la = [xx, a[1]]; lb = [xx, b[1]];
+      tickA = [[xx-4,a[1]],[xx+4,a[1]]];
+      tickB = [[xx-4,b[1]],[xx+4,b[1]]];
+      labelPos = [xx-5, (a[1]+b[1])/2];
+      rot = -90;
+    }
+    if (!editable || known){
+      s += `<g stroke="#2451D6" stroke-width="1">`;
+      s += `<line x1="${la[0].toFixed(1)}" y1="${la[1].toFixed(1)}" x2="${lb[0].toFixed(1)}" y2="${lb[1].toFixed(1)}"/>`;
+      s += `<line x1="${tickA[0][0].toFixed(1)}" y1="${tickA[0][1].toFixed(1)}" x2="${tickA[1][0].toFixed(1)}" y2="${tickA[1][1].toFixed(1)}"/>`;
+      s += `<line x1="${tickB[0][0].toFixed(1)}" y1="${tickB[0][1].toFixed(1)}" x2="${tickB[1][0].toFixed(1)}" y2="${tickB[1][1].toFixed(1)}"/>`;
+      s += `</g>`;
+    }
+    if (!editable){
+      s += `<text x="${labelPos[0].toFixed(1)}" y="${labelPos[1].toFixed(1)}" font-size="7" font-family="monospace" fill="#2451D6" stroke="none" text-anchor="middle" ${rot? `transform="rotate(${rot} ${labelPos[0].toFixed(1)} ${labelPos[1].toFixed(1)})"`:''}>${fmtN(d.value)} cm</text>`;
+    } else {
+      labels.push({ id:d.id, x:labelPos[0], y:labelPos[1], rot, value:d.value, known });
+    }
+  });
+
+  if (sinkRect){
+    const [x0,y0,x1,y1] = sinkRect;
+    const p = [[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(p=>[p[0]+shift[0],p[1]+shift[1]]);
+    s += `<polygon points="${fmtPts(p)}" fill="none" stroke-width="1.2"/>`;
+  }
+  if (cooktopRect){
+    const [x0,y0,x1,y1] = cooktopRect;
+    const p = [[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(p=>[p[0]+shift[0],p[1]+shift[1]]);
+    s += `<polygon points="${fmtPts(p)}" fill="none" stroke-width="1.2" stroke-dasharray="3 2"/>`;
+  }
+  if (faucetPt){
+    const fp = [faucetPt[0]+shift[0], faucetPt[1]+shift[1]];
+    s += `<circle cx="${fp[0].toFixed(1)}" cy="${fp[1].toFixed(1)}" r="2.4" stroke-width="1.2"/>`;
+  }
+  s += '</svg>';
+  return { svg:s, vbW, vbH, labels };
+}
+
+/* ---------------- ISOMETRIC VIEW (with walls + frontao/saia) ---------------- */
+function buildIsoSVG(pts, sinkRect, cooktopRect, faucetPt, H, targetW, targetTopH, activeWalls, frontaoVal, saiaVal, isoOverride){
+  H = H || 8;
+  const xsRaw = pts.map(([x,y]) => (x-y)*Math.cos(Math.PI/6));
+  const ysRaw = pts.map(([x,y]) => -(x+y)*0.5);
+  const w = Math.max(...xsRaw)-Math.min(...xsRaw);
+  const h = Math.max(...ysRaw)-Math.min(...ysRaw);
+  const s = Math.min(targetW/w, targetTopH/h);
+  const ox = 14 - Math.min(...xsRaw)*s;
+  const oy = 12 - Math.min(...ysRaw)*s;
+
+  const top = pts.map(([x,y]) => isoProject(x,y,H,ox,oy,s));
+  const plain = [], hatch = [];
+
+  if (isoOverride){
+    const hatchKeys = new Set(isoOverride.hatch.map(([a,b]) => a[0]+','+a[1]+'|'+b[0]+','+b[1]));
+    isoOverride.visible.forEach(([p1,p2]) => {
+      const top1 = isoProject(p1[0],p1[1],H,ox,oy,s), top2 = isoProject(p2[0],p2[1],H,ox,oy,s);
+      const base1 = isoProject(p1[0],p1[1],0,ox,oy,s), base2 = isoProject(p2[0],p2[1],0,ox,oy,s);
+      const quad = [top1, top2, base2, base1];
+      const key = p1[0]+','+p1[1]+'|'+p2[0]+','+p2[1];
+      (hatchKeys.has(key) ? hatch : plain).push(quad);
+    });
+  } else {
+    const { edges } = classifyEdges(pts, ox, oy, s, H);
+    const vis = edges.filter(e => e.visible);
+    vis.forEach(e => {
+      const [x1,y1]=e.p1, [x2,y2]=e.p2;
+      const base1 = isoProject(x1,y1,0,ox,oy,s), base2 = isoProject(x2,y2,0,ox,oy,s);
+      const quad = [e.top1, e.top2, base2, base1];
+      (e.isEnd ? hatch : plain).push(quad);
+    });
+  }
+
+  let wallExtraH = 0;
+  const wallH = 42;
+  if (activeWalls && activeWalls.length) wallExtraH = wallH*s*0.55; // walls rise above top face
+
+  let frontExtraH = 0;
+  const fVal = frontaoVal||0, sVal = saiaVal||0;
+  if (fVal>0 || sVal>0) frontExtraH = (fVal+sVal)*s;
+
+  const totalH = h*s + H*s + 12 + 10 + wallExtraH + frontExtraH;
+  const totalW = w*s + 14 + 12;
+
+  let svg = `<svg viewBox="0 0 ${totalW.toFixed(0)} ${totalH.toFixed(0)}" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">`;
+
+  // WALLS first (drawn behind the counter block)
+  if (activeWalls && activeWalls.length){
+    activeWalls.forEach(([p1,p2]) => {
+      const top1 = isoProject(p1[0],p1[1],H,ox,oy,s);
+      const top2 = isoProject(p2[0],p2[1],H,ox,oy,s);
+      const wallTop1 = isoProject(p1[0],p1[1],H+wallH,ox,oy,s);
+      const wallTop2 = isoProject(p2[0],p2[1],H+wallH,ox,oy,s);
+      svg += `<polygon points="${fmtPts([wallTop1,wallTop2,top2,top1])}" fill="#EDEBF5" stroke="#B9B6C9" stroke-width="1"/>`;
+    });
+  }
+
+  plain.forEach(q => svg += `<polygon points="${fmtPts(q)}" fill="#F7F6F3"/>`);
+  hatch.forEach(q => svg += `<polygon points="${fmtPts(q)}" fill="url(#hatchIso)"/>`);
+  svg += `<polygon points="${fmtPts(top)}" fill="#FCFCFA" stroke-width="2"/>`;
+
+  if (sinkRect){
+    const [x0,y0,x1,y1] = sinkRect;
+    const sp = [[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(([x,y]) => isoProject(x,y,H,ox,oy,s));
+    svg += `<polygon points="${fmtPts(sp)}" fill="#EFEDE7" stroke-width="1.1"/>`;
+  }
+  if (cooktopRect){
+    const [x0,y0,x1,y1] = cooktopRect;
+    const cp = [[x0,y0],[x1,y0],[x1,y1],[x0,y1]].map(([x,y]) => isoProject(x,y,H,ox,oy,s));
+    svg += `<polygon points="${fmtPts(cp)}" fill="#EFEDE7" stroke-width="1.1" stroke-dasharray="3 2"/>`;
+  }
+  if (faucetPt){
+    const [fx,fy] = isoProject(faucetPt[0], faucetPt[1], H, ox, oy, s);
+    svg += `<ellipse cx="${fx.toFixed(1)}" cy="${fy.toFixed(1)}" rx="3" ry="1.5" transform="rotate(-20 ${fx.toFixed(1)} ${fy.toFixed(1)})" stroke-width="1.1"/>`;
+  }
+
+  // FRONTAO / SAIA hanging panels on all front (y=0) edges
+  if (fVal>0 || sVal>0){
+    const frontEdges = [];
+    for (let i=0;i<pts.length;i++){
+      const p1=pts[i], p2=pts[(i+1)%pts.length];
+      if (p1[1]===0 && p2[1]===0) frontEdges.push([p1,p2]);
+    }
+    frontEdges.forEach(([p1,p2]) => {
+      if (fVal>0){
+        const t1 = isoProject(p1[0],p1[1],0,ox,oy,s);
+        const t2 = isoProject(p2[0],p2[1],0,ox,oy,s);
+        const b1 = isoProject(p1[0],p1[1],-fVal,ox,oy,s);
+        const b2 = isoProject(p2[0],p2[1],-fVal,ox,oy,s);
+        svg += `<polygon points="${fmtPts([t1,t2,b2,b1])}" fill="#F7F6F3" stroke-width="1.3"/>`;
+      }
+      if (sVal>0){
+        const zTop = -fVal;
+        const zBot = -(fVal+sVal);
+        const t1 = isoProject(p1[0],p1[1],zTop,ox,oy,s);
+        const t2 = isoProject(p2[0],p2[1],zTop,ox,oy,s);
+        const b1 = isoProject(p1[0],p1[1],zBot,ox,oy,s);
+        const b2 = isoProject(p2[0],p2[1],zBot,ox,oy,s);
+        svg += `<polygon points="${fmtPts([t1,t2,b2,b1])}" fill="#F0EFEA" stroke-width="1.3"/>`;
+      }
+    });
+    // labels
+    const midFront = frontEdges[0];
+    if (midFront){
+      const [p1,p2] = midFront;
+      const midx = (p1[0]+p2[0])/2;
+      if (fVal>0){
+        const [lx,ly] = isoProject(midx,0,-fVal/2,ox,oy,s);
+        svg += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" font-size="6.5" font-family="monospace" fill="#2451D6" stroke="none" text-anchor="middle">Frontão ${fmtN(fVal)}cm</text>`;
+      }
+      if (sVal>0){
+        const [lx,ly] = isoProject(midx,0,-fVal-sVal/2,ox,oy,s);
+        svg += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" font-size="6.5" font-family="monospace" fill="#2451D6" stroke="none" text-anchor="middle">Saia ${fmtN(sVal)}cm</text>`;
+      }
+    }
+  }
+
+  svg += '</svg>';
+  return { svg, vbW: totalW, vbH: totalH };
+}
+
+/* ---------------- ELEVATION VIEW (front: width x height-from-floor) ---------------- */
+function buildElevationSVG(W, altura, opts){
+  opts = opts || {};
+  const wallLeft = !!opts.wallLeft, wallRight = !!opts.wallRight;
+  const frontaoVal = opts.frontaoVal || 0, saiaVal = opts.saiaVal || 0;
+  const editable = !!opts.editable;
+  const hasValues = opts.hasValues || {};
+  const frontaoApplicable = opts.frontaoApplicable !== false;
+  const saiaApplicable = opts.saiaApplicable !== false;
+  const thickness = 4; // representative visual thickness (not a collected field)
+
+  const marginL = 34, marginR = 14, marginTop = 14, marginBottom = 14;
+  const wallExtra = (wallLeft||wallRight) ? 30 : 0;
+  const hangExtra = frontaoVal + saiaVal;
+
+  const vbW = W + marginL + marginR;
+  const vbH = altura + thickness + wallExtra + hangExtra + marginTop + marginBottom;
+  const floorY = vbH - marginBottom;
+  const X = (x) => x + marginL;
+  const Y = (hFromFloor) => floorY - hFromFloor;
+  const labels = [];
+
+  let s = `<svg viewBox="0 0 ${vbW.toFixed(0)} ${vbH.toFixed(0)}" fill="none" stroke="currentColor" stroke-linejoin="round">`;
+  s += `<line x1="${X(-6).toFixed(1)}" y1="${floorY.toFixed(1)}" x2="${X(W+6).toFixed(1)}" y2="${floorY.toFixed(1)}" stroke-width="1.6"/>`;
+
+  const wallTopH = altura + thickness + wallExtra*0.7;
+  if (wallLeft){
+    const x0=X(-2), x1=X(6);
+    s += `<polygon points="${x0.toFixed(1)},${floorY.toFixed(1)} ${x1.toFixed(1)},${floorY.toFixed(1)} ${x1.toFixed(1)},${Y(wallTopH).toFixed(1)} ${x0.toFixed(1)},${Y(wallTopH).toFixed(1)}" fill="url(#hatchPlan)" stroke-width="1.3"/>`;
+  }
+  if (wallRight){
+    const x0=X(W-6), x1=X(W+2);
+    s += `<polygon points="${x0.toFixed(1)},${floorY.toFixed(1)} ${x1.toFixed(1)},${floorY.toFixed(1)} ${x1.toFixed(1)},${Y(wallTopH).toFixed(1)} ${x0.toFixed(1)},${Y(wallTopH).toFixed(1)}" fill="url(#hatchPlan)" stroke-width="1.3"/>`;
+  }
+
+  const topY = Y(altura), botY = Y(altura - thickness);
+  s += `<polygon points="${X(0).toFixed(1)},${topY.toFixed(1)} ${X(W).toFixed(1)},${topY.toFixed(1)} ${X(W).toFixed(1)},${botY.toFixed(1)} ${X(0).toFixed(1)},${botY.toFixed(1)}" fill="#FCFCFA" stroke-width="2"/>`;
+
+  let curH = altura - thickness;
+  const frontaoKnown = editable ? !!hasValues.frontao : true;
+  const saiaKnown = editable ? !!hasValues.saia : true;
+  const alturaKnown = editable ? !!hasValues.altura : true;
+
+  if (frontaoVal > 0 && (!editable || frontaoKnown)){
+    const y0 = Y(curH), y1 = Y(curH - frontaoVal);
+    s += `<polygon points="${X(0).toFixed(1)},${y0.toFixed(1)} ${X(W).toFixed(1)},${y0.toFixed(1)} ${X(W).toFixed(1)},${y1.toFixed(1)} ${X(0).toFixed(1)},${y1.toFixed(1)}" fill="#F7F6F3" stroke-width="1.3"/>`;
+    const midY = (y0+y1)/2;
+    if (!editable){
+      s += `<text x="${((X(0)+X(W))/2).toFixed(1)}" y="${(midY+2.5).toFixed(1)}" font-size="7" font-family="monospace" fill="#2451D6" stroke="none" text-anchor="middle">Frontão ${fmtN(frontaoVal)}cm</text>`;
+    } else {
+      labels.push({ id:'frontao', x:(X(0)+X(W))/2, y:midY, rot:0, value:frontaoVal, known:true, prefix:'Frontão' });
+    }
+    curH -= frontaoVal;
+  } else if (editable && !frontaoKnown && frontaoApplicable){
+    labels.push({ id:'frontao', x:(X(0)+X(W))/2, y:Y(curH), rot:0, value:0, known:false, prefix:'Frontão' });
+  }
+
+  if (saiaVal > 0 && (!editable || saiaKnown)){
+    const y0 = Y(curH), y1 = Y(curH - saiaVal);
+    s += `<polygon points="${X(0).toFixed(1)},${y0.toFixed(1)} ${X(W).toFixed(1)},${y0.toFixed(1)} ${X(W).toFixed(1)},${y1.toFixed(1)} ${X(0).toFixed(1)},${y1.toFixed(1)}" fill="#F0EFEA" stroke-width="1.3"/>`;
+    const midY = (y0+y1)/2;
+    if (!editable){
+      s += `<text x="${((X(0)+X(W))/2).toFixed(1)}" y="${(midY+2.5).toFixed(1)}" font-size="7" font-family="monospace" fill="#2451D6" stroke="none" text-anchor="middle">Saia ${fmtN(saiaVal)}cm</text>`;
+    } else {
+      labels.push({ id:'saia', x:(X(0)+X(W))/2, y:midY, rot:0, value:saiaVal, known:true, prefix:'Saia' });
+    }
+    curH -= saiaVal;
+  } else if (editable && !saiaKnown && saiaApplicable){
+    labels.push({ id:'saia', x:(X(0)+X(W))/2, y:Y(curH), rot:0, value:0, known:false, prefix:'Saia' });
+  }
+
+  const dimX = X(-18);
+  const dimMidY = (floorY+topY)/2;
+  if (!editable || alturaKnown){
+    s += `<g stroke="#2451D6" stroke-width="1">`;
+    s += `<line x1="${dimX.toFixed(1)}" y1="${floorY.toFixed(1)}" x2="${dimX.toFixed(1)}" y2="${topY.toFixed(1)}"/>`;
+    s += `<line x1="${(dimX-4).toFixed(1)}" y1="${floorY.toFixed(1)}" x2="${(dimX+4).toFixed(1)}" y2="${floorY.toFixed(1)}"/>`;
+    s += `<line x1="${(dimX-4).toFixed(1)}" y1="${topY.toFixed(1)}" x2="${(dimX+4).toFixed(1)}" y2="${topY.toFixed(1)}"/>`;
+    s += `</g>`;
+  }
+  if (!editable){
+    s += `<text x="${dimX.toFixed(1)}" y="${dimMidY.toFixed(1)}" font-size="7" font-family="monospace" fill="#2451D6" stroke="none" text-anchor="middle" transform="rotate(-90 ${dimX.toFixed(1)} ${dimMidY.toFixed(1)})">${fmtN(altura)} cm</text>`;
+  } else {
+    labels.push({ id:'altura', x:dimX, y:dimMidY, rot:-90, value:altura, known:alturaKnown, prefix:'' });
+  }
+
+  s += '</svg>';
+  return { svg: s, vbW, vbH, labels };
+}
 
 /* ---------------------------------------------------------
-   SCHEMA
+   EDITABLE COTAS — dimensions are entered by tapping the value
+   directly on the drawing, then confirmed with "Atualizar
+   desenho" (batch update, nothing recalculates as you type).
 --------------------------------------------------------- */
-const fechamentos = (n) => {
-  const labels = ['uma lateral','duas laterais','três laterais','quatro laterais'];
-  return labels.slice(0,n).map((l,i)=>({
-    id:`fechamento_${i+1}`, label:`Fechamento em ${l}`, type:'boolText',
-    textLabel:`Descreva o fechamento em ${l}`
-  }));
-};
-
-const areasRecortes = [
-  {id:'area_molhada', label:'Área molhada', type:'text'},
-  {id:'area_seca', label:'Área seca', type:'text'},
-];
-
-const recortesTorneiras = [
-  {id:'recorte_cuba', label:'Recorte de cuba', type:'boolText', textLabel:'Descreva o recorte de cuba'},
-  {id:'recorte_cooktop', label:'Recorte de cooktop', type:'boolText', textLabel:'Descreva o recorte de cooktop'},
-  {id:'recorte_calha_umida', label:'Recorte de calha úmida', type:'boolText', textLabel:'Descreva o recorte de calha úmida'},
-  {id:'torneira_bancada', label:'Torneira de bancada', type:'boolText', textLabel:'Descreva a torneira de bancada'},
-  {id:'torneira_pe', label:'Torneira de parede', type:'boolText', textLabel:'Descreva a torneira de parede'},
-];
-
-const paredesEApoio = [
-  {id:'parede_fundo', label:'Parede de fundo', type:'bool'},
-  {id:'parede_lateral_direita', label:'Parede lateral direita', type:'bool'},
-  {id:'parede_lateral_esquerda', label:'Parede lateral esquerda', type:'bool'},
-  {id:'recorte_parede', label:'Recorte na parede', type:'boolText', textLabel:'Descreva o recorte na parede'},
-  {id:'apoiada_parede', label:'Apoiada na parede', type:'bool'},
-  {id:'apoiada_marcenaria', label:'Apoiada na marcenaria', type:'bool'},
-];
-
-const SCHEMAS = {
-  ilha: {
-    name:'Bancada Ilha',
-    desc:'Peça isolada, sem encostar em paredes',
-    sections:[
-      {title:'Dimensões', fields:[
-        {id:'largura', label:'Largura', type:'cm'},
-        {id:'profundidade', label:'Profundidade', type:'cm'},
-        {id:'altura', label:'Altura', type:'cm'},
-      ]},
-      {title:'Material', fields:[
-        {id:'material', label:'Material', type:'text'},
-      ]},
-      {title:'Fechamentos laterais', fields: fechamentos(4)},
-      {title:'Áreas', fields: areasRecortes},
-      {title:'Recortes e torneiras', fields: recortesTorneiras},
-      {title:'Apoio e acabamento', fields:[
-        {id:'apoiada_marcenaria', label:'Apoiada na marcenaria', type:'bool'},
-      ]},
-    ]
-  },
-  reta: {
-    name:'Bancada Reta',
-    desc:'Peça única, em linha reta',
-    sections:[
-      {title:'Dimensões', fields:[
-        {id:'largura', label:'Largura', type:'cm'},
-        {id:'altura', label:'Altura', type:'cm'},
-        {id:'profundidade', label:'Profundidade', type:'cm'},
-        {id:'saia', label:'Saia', type:'cm'},
-        {id:'frontao', label:'Frontão', type:'cm'},
-      ]},
-      {title:'Material', fields:[
-        {id:'material', label:'Material', type:'text'},
-      ]},
-      {title:'Fechamentos laterais', fields: fechamentos(2)},
-      {title:'Áreas', fields: areasRecortes},
-      {title:'Recortes e torneiras', fields: recortesTorneiras},
-      {title:'Paredes e apoio', fields: paredesEApoio},
-    ]
-  },
-  l: {
-    name:'Bancada em L',
-    desc:'Duas alas formando um ângulo de 90°',
-    sections:[
-      {title:'Dimensões', fields:[
-        {id:'largura_esquerda', label:'Largura — lado esquerdo', type:'cm'},
-        {id:'largura_direita', label:'Largura — lado direito', type:'cm'},
-        {id:'profundidade_esquerda', label:'Profundidade — lado esquerdo', type:'cm'},
-        {id:'profundidade_direita', label:'Profundidade — lado direito', type:'cm'},
-        {id:'altura', label:'Altura', type:'cm'},
-        {id:'saia', label:'Saia', type:'cm'},
-        {id:'frontao', label:'Frontão', type:'cm'},
-      ]},
-      {title:'Material', fields:[
-        {id:'material', label:'Material', type:'text'},
-      ]},
-      {title:'Fechamentos laterais', fields: fechamentos(4)},
-      {title:'Áreas', fields: areasRecortes},
-      {title:'Recortes e torneiras', fields: recortesTorneiras},
-      {title:'Paredes e apoio', fields: paredesEApoio},
-    ]
-  },
-  u: {
-    name:'Bancada em U',
-    desc:'Três alas ao longo de três paredes',
-    note:'Este tipo não tinha campos detalhados na especificação original — a Monolith preparou a estrutura abaixo espelhando o padrão da Bancada em L e da Bancada Especial (medidas em três segmentos: esquerdo, fundo e direito). Ajuste se necessário.',
-    sections:[
-      {title:'Dimensões', fields:[
-        {id:'largura_esquerda', label:'Largura — lado esquerdo', type:'cm'},
-        {id:'largura_fundo', label:'Largura — fundo', type:'cm'},
-        {id:'largura_direita', label:'Largura — lado direito', type:'cm'},
-        {id:'profundidade_esquerda', label:'Profundidade — lado esquerdo', type:'cm'},
-        {id:'profundidade_fundo', label:'Profundidade — fundo', type:'cm'},
-        {id:'profundidade_direita', label:'Profundidade — lado direito', type:'cm'},
-        {id:'altura', label:'Altura', type:'cm'},
-        {id:'saia', label:'Saia', type:'cm'},
-        {id:'frontao', label:'Frontão', type:'cm'},
-      ]},
-      {title:'Material', fields:[
-        {id:'material', label:'Material', type:'text'},
-      ]},
-      {title:'Fechamentos laterais', fields: fechamentos(4)},
-      {title:'Áreas', fields: areasRecortes},
-      {title:'Recortes e torneiras', fields: recortesTorneiras},
-      {title:'Paredes e apoio', fields: paredesEApoio},
-    ]
-  },
-  especial: {
-    name:'Bancada Especial',
-    desc:'Formato exclusivo, fora do padrão',
-    sections:[
-      {title:'Dimensões', fields:[
-        {id:'largura_esquerda', label:'Largura — lado esquerdo', type:'cm'},
-        {id:'largura_centro', label:'Largura — centro', type:'cm'},
-        {id:'largura_direita', label:'Largura — lado direito', type:'cm'},
-        {id:'profundidade_esquerda', label:'Profundidade — lado esquerdo', type:'cm'},
-        {id:'profundidade_centro', label:'Profundidade — centro', type:'cm'},
-        {id:'profundidade_direita', label:'Profundidade — lado direito', type:'cm'},
-        {id:'altura', label:'Altura', type:'cm'},
-        {id:'saia', label:'Saia', type:'cm'},
-        {id:'frontao', label:'Frontão', type:'cm'},
-      ]},
-      {title:'Material', fields:[
-        {id:'material', label:'Material', type:'text'},
-      ]},
-      {title:'Fechamentos laterais', fields: fechamentos(4)},
-      {title:'Áreas', fields: areasRecortes},
-      {title:'Recortes e torneiras', fields: recortesTorneiras},
-      {title:'Paredes e apoio', fields: paredesEApoio},
-      {title:'Sobre o projeto', fields:[
-        {id:'sobre_projeto', label:'Fale mais sobre seu projeto', type:'text'},
-      ]},
-    ]
-  },
-  wc: {
-    name:'Bancada WC sob Cx Acoplada',
-    desc:'Bancada de banheiro com nicho para caixa acoplada',
-    note:'Categoria nova, baseada na referência enviada — a aba mais estreita representa o nicho que contorna a caixa acoplada. Ajuste os campos se sua referência for diferente.',
-    sections:[
-      {title:'Dimensões', fields:[
-        {id:'largura', label:'Largura do tampo principal', type:'cm'},
-        {id:'profundidade', label:'Profundidade do tampo principal', type:'cm'},
-        {id:'largura_aba', label:'Largura da aba (nicho da caixa acoplada)', type:'cm'},
-        {id:'profundidade_aba', label:'Profundidade da aba', type:'cm'},
-        {id:'altura', label:'Altura do piso até o tampo', type:'cm'},
-        {id:'saia', label:'Saia', type:'cm'},
-        {id:'frontao', label:'Frontão', type:'cm'},
-      ]},
-      {title:'Material', fields:[
-        {id:'material', label:'Material', type:'text'},
-      ]},
-      {title:'Fechamentos laterais', fields: fechamentos(2)},
-      {title:'Áreas', fields: areasRecortes},
-      {title:'Recortes e torneiras', fields:[
-        {id:'recorte_cuba', label:'Recorte de cuba', type:'boolText', textLabel:'Descreva o recorte de cuba'},
-        {id:'recorte_calha_umida', label:'Recorte de calha úmida', type:'boolText', textLabel:'Descreva o recorte de calha úmida'},
-        {id:'torneira_bancada', label:'Torneira de bancada', type:'boolText', textLabel:'Descreva a torneira de bancada'},
-        {id:'torneira_pe', label:'Torneira de parede', type:'boolText', textLabel:'Descreva a torneira de parede'},
-      ]},
-      {title:'Paredes e apoio', fields: paredesEApoio},
-    ]
-  },
-};
-
-const TYPE_ORDER = ['ilha','reta','l','u','especial','wc'];
